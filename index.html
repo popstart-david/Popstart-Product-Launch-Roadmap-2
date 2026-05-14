@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Popstart — Product Launch Roadmap</title>
+<style>
+  :root {
+    --navy: #1F3864;
+    --blue: #2E75B6;
+    --light-blue: #D9E2F3;
+    --teal: #1D9E75;
+    --teal-bg: #E1F5EE;
+    --teal-border: #0F6E56;
+    --amber: #BA7517;
+    --amber-bg: #FAEEDA;
+    --amber-border: #854F0B;
+    --gray-bg: #F1EFE8;
+    --gray-border: #888780;
+    --stripe: #F7F6F2;
+    --text: #2C2C2A;
+    --text-secondary: #5F5E5A;
+    --border: #D3D1C7;
+    --bg: #FAFAF7;
+    --card-bg: #FFFFFF;
+    --user-bubble: #E6F1FB;
+    --agent-bubble: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.5; }
+  .app { max-width: 1400px; margin: 0 auto; padding: 16px; }
+
+  /* Header */
+  .header { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .header h1 { margin: 0; font-size: 18px; color: var(--navy); }
+  .header h1 .badge { font-size: 11px; background: var(--amber-bg); color: var(--amber-border); padding: 3px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; font-weight: 600; }
+  .header .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .header label { font-size: 13px; color: var(--text-secondary); }
+  .header select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: white; font-size: 13px; font-family: inherit; cursor: pointer; }
+  .header button { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: white; font-size: 13px; cursor: pointer; color: var(--text); font-family: inherit; }
+  .header button:hover { background: var(--stripe); }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 1fr 420px; gap: 16px; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Chat */
+  .chat-pane { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; min-height: 600px; max-height: 80vh; }
+  .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .chat-header .dot { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; }
+  .chat-header .title { font-weight: 600; font-size: 14px; }
+  .chat-header .sub { font-size: 12px; color: var(--text-secondary); margin-left: auto; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 88%; }
+  .msg.agent { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  .msg .bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; }
+  .msg.agent .bubble { background: var(--agent-bubble); border: 1px solid var(--border); }
+  .msg.user .bubble { background: var(--user-bubble); border: 1px solid #B5D4F4; color: #042C53; }
+  .msg .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; padding-left: 4px; }
+  .msg.user .label { text-align: right; padding-right: 4px; padding-left: 0; }
+
+  /* Glossary term */
+  .gloss { font-weight: 600; border-bottom: 1px dotted var(--blue); cursor: help; position: relative; color: inherit; }
+  .gloss:hover { background: var(--light-blue); }
+  .tooltip { display: none; position: absolute; bottom: 100%; left: 0; background: #2C2C2A; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; width: 260px; max-width: calc(100vw - 40px); z-index: 100; margin-bottom: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 400; pointer-events: none; }
+  .gloss:hover .tooltip, .gloss:focus .tooltip, .gloss:focus-within .tooltip { display: block; }
+  .tooltip strong { color: #F0E5C0; display: block; margin-bottom: 4px; }
+  .tooltip::after { content: ''; position: absolute; top: 100%; left: 12px; border: 5px solid transparent; border-top-color: #2C2C2A; }
+
+  /* Input controls */
+  .input-area { border-top: 1px solid var(--border); padding: 14px 18px; background: var(--stripe); border-radius: 0 0 12px 12px; }
+  .input-area .prompt-question { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; }
+  .input-area .hint { font-size: 12px; color: var(--amber-border); background: var(--amber-bg); padding: 8px 10px; border-radius: 6px; border-left: 3px solid var(--amber-border); margin-bottom: 10px; font-style: normal; }
+  .input-area .hint strong { font-weight: 600; }
+
+  /* Profile bar — durable identity fields */
+  .profile-bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 10px 14px; background: var(--stripe); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; font-size: 13px; }
+  .profile-bar .pf-group { display: flex; align-items: center; gap: 6px; }
+  .profile-bar .pf-group label { color: var(--text-secondary); font-size: 12px; font-weight: 600; }
+  .profile-bar .pf-group select { padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: white; font-size: 13px; font-family: inherit; }
+  .profile-bar .derived { padding: 4px 10px; background: var(--light-blue); color: var(--navy); border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .profile-bar .warning { padding: 4px 10px; background: var(--amber-bg); color: var(--amber-border); border-radius: 12px; font-size: 12px; font-weight: 600; border: 1px solid var(--amber-border); }
+
+  /* Right pane tabs */
+  .tab-bar { display: flex; gap: 0; margin-bottom: 8px; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 8px 14px; background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; font-family: inherit; font-size: 13px; color: var(--text-secondary); font-weight: 600; }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--blue); }
+  .tab-btn .count { background: var(--gray-bg); color: var(--text-secondary); border-radius: 10px; padding: 1px 6px; font-size: 10px; margin-left: 4px; }
+  .tab-btn.active .count { background: var(--blue); color: white; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Input variables tab */
+  .iv-list { display: flex; flex-direction: column; gap: 10px; max-height: 80vh; overflow-y: auto; padding-right: 4px; }
+  .iv-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+  .iv-row.empty { border-style: dashed; color: var(--text-secondary); }
+  .iv-row .iv-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 4px; }
+  .iv-row .iv-value { color: var(--text); }
+  .iv-row .iv-source { font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-style: italic; }
+
+  /* Deliverable tab */
+  .deliverable-pane { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; max-height: 80vh; overflow-y: auto; }
+  .deliverable-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .deliverable-header .brand-tag { font-size: 11px; font-weight: 700; color: var(--navy); letter-spacing: 1px; }
+  .deliverable-actions { display: flex; gap: 6px; }
+  .deliv-action-btn { padding: 4px 10px; background: var(--navy); color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 600; }
+  .deliv-action-btn:hover { background: #143055; }
+  .deliv-action-btn.secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+  .deliv-action-btn.secondary:hover { background: var(--stripe); }
+  .deliverable-title { font-size: 22px; font-weight: 700; color: var(--navy); margin: 0 0 4px; }
+  .deliverable-subtitle { font-size: 13px; color: var(--text-secondary); margin: 0 0 8px; }
+  .deliv-section { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px dashed var(--border); }
+  .deliv-section:last-child { border-bottom: none; }
+  .deliv-section h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .deliv-section .deliv-lede { font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 10px; font-weight: 500; }
+  .deliv-section .deliv-body { font-size: 13px; line-height: 1.55; color: var(--text); }
+  .deliv-section .deliv-body p { margin: 0 0 8px; }
+  .deliv-section .deliv-rationale { background: var(--light-blue); border-radius: 6px; padding: 10px 12px; margin: 8px 0; font-size: 12px; }
+  .deliv-section .deliv-rationale strong { color: var(--navy); }
+  .deliv-section .deliv-method { background: var(--stripe); border-left: 3px solid var(--text-secondary); padding: 8px 12px; margin: 8px 0; font-size: 12px; }
+  .deliv-section .deliv-method strong { color: var(--text); }
+  .deliv-section .deliv-example { background: var(--teal-bg); border-left: 3px solid var(--teal-border); padding: 8px 12px; margin: 8px 0; font-size: 12px; font-style: italic; }
+  .deliv-section .deliv-example strong { color: var(--teal-border); font-style: normal; }
+  .deliv-glossary { background: var(--stripe); border-radius: 8px; padding: 14px; }
+  .deliv-glossary h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin: 0 0 10px; }
+  .deliv-glossary-grid { display: grid; grid-template-columns: 1fr; gap: 10px; font-size: 12px; }
+  .deliv-glossary-grid .gt { font-weight: 600; color: var(--navy); }
+  .deliv-glossary-grid .gd { color: var(--text-secondary); margin-top: 2px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .choice-btn { padding: 8px 12px; background: white; border: 1px solid var(--border); border-radius: 16px; font-size: 13px; cursor: pointer; font-family: inherit; color: var(--text); transition: all 0.1s; }
+  .choice-btn:hover { border-color: var(--blue); background: var(--light-blue); }
+  .choice-btn.selected { background: var(--blue); color: white; border-color: var(--blue); }
+  .input-area input[type="text"], .input-area textarea, .input-area select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; background: white; }
+  .input-area textarea { min-height: 70px; }
+  .input-area .submit-row { margin-top: 10px; display: flex; gap: 8px; align-items: center; }
+  .submit-btn { padding: 8px 16px; background: var(--navy); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .submit-btn:hover { background: #143055; }
+  .submit-btn:disabled { background: var(--gray-border); cursor: not-allowed; }
+  .use-example-btn { padding: 6px 12px; background: white; border: 1px dashed var(--amber-border); border-radius: 6px; font-size: 12px; cursor: pointer; color: var(--amber-border); font-family: inherit; }
+  .use-example-btn:hover { background: var(--amber-bg); border-style: solid; }
+
+  /* Composite input */
+  .composite-input { display: flex; flex-direction: column; gap: 8px; }
+
+  /* Dynamic list input */
+  .list-input { display: flex; flex-direction: column; gap: 6px; }
+  .list-input-row { display: flex; gap: 6px; align-items: center; }
+  .list-input-row input { flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 14px; }
+  .list-input-row .remove-btn { background: white; border: 1px solid var(--border); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; color: var(--text-secondary); font-size: 14px; padding: 0; }
+  .list-input-row .remove-btn:hover { background: var(--stripe); color: var(--text); }
+  .list-input-add { padding: 6px 12px; background: white; border: 1px dashed var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; align-self: flex-start; color: var(--text-secondary); font-family: inherit; }
+  .list-input-add:hover { background: var(--light-blue); border-color: var(--blue); color: var(--blue); border-style: solid; }
+  .list-input-add:disabled { opacity: 0.5; cursor: not-allowed; }
+  .list-counter { font-size: 11px; color: var(--text-secondary); }
+
+  /* Cards pane */
+  .cards-pane { background: transparent; }
+  .cards-pane-header { padding: 0 4px 8px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; }
+  .mode-tag { background: var(--light-blue); color: var(--navy); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .agent-tag { background: var(--teal-bg); color: var(--teal-border); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 6px; }
+  .cards-scroll { display: flex; flex-direction: column; gap: 10px; max-height: 80vh; overflow-y: auto; padding-right: 4px; }
+  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .card.placeholder { border-style: dashed; color: var(--text-secondary); }
+  .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .card-title .num { background: var(--blue); color: white; width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
+  .card.placeholder .card-title .num { background: var(--gray-border); }
+  .card-content { font-size: 13px; }
+  .card.populated { animation: cardPop 0.4s ease-out; }
+  @keyframes cardPop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PDF preview */
+  .pdf-preview { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-top: 16px; max-width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .pdf-page { border-bottom: 2px dashed var(--border); padding-bottom: 20px; margin-bottom: 20px; }
+  .pdf-page:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .pdf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .pdf-header .brand { font-size: 11px; font-weight: 700; color: var(--navy); letter-spacing: 1px; }
+  .pdf-header .date { font-size: 11px; color: var(--text-secondary); }
+  .pdf-title { font-size: 20px; font-weight: 700; color: var(--navy); margin: 0 0 4px; }
+  .pdf-subtitle { font-size: 13px; color: var(--text-secondary); margin: 0 0 16px; }
+  .pdf-section { margin-bottom: 16px; }
+  .pdf-section-title { font-size: 13px; font-weight: 700; color: var(--navy); margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pdf-section-body { font-size: 13px; line-height: 1.5; }
+
+  .tracker { margin: 16px 0; }
+
+  /* Glossary card */
+  .glossary-card { background: var(--stripe); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 12px; }
+  .glossary-card h4 { margin: 0 0 8px; font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+  .glossary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; font-size: 12px; }
+  .glossary-grid .term { font-weight: 600; }
+  .glossary-grid .def { color: var(--text-secondary); }
+  @media (max-width: 600px) { .glossary-grid { grid-template-columns: 1fr; } }
+
+  /* Banners */
+  .coach-banner { background: linear-gradient(135deg, #E1F5EE 0%, #D9E2F3 100%); border: 1px solid var(--teal-border); border-radius: 10px; padding: 14px 16px; margin: 10px 0; }
+  .coach-banner h3 { margin: 0 0 6px; font-size: 14px; color: var(--teal-border); }
+  .coach-banner p { margin: 0 0 10px; font-size: 13px; }
+  .coach-suggestions { display: flex; flex-direction: column; gap: 6px; }
+  .coach-suggestion { padding: 8px 12px; background: white; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; text-align: left; font-family: inherit; color: var(--text); }
+  .coach-suggestion:hover { background: var(--light-blue); border-color: var(--blue); }
+
+  .handoff-banner { background: var(--light-blue); border: 1px solid var(--blue); border-radius: 10px; padding: 14px 16px; margin: 10px 0; }
+  .handoff-banner h3 { margin: 0 0 4px; font-size: 14px; color: var(--navy); }
+  .handoff-banner p { margin: 0 0 10px; font-size: 13px; }
+  .handoff-btn { padding: 8px 14px; background: var(--navy); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .handoff-btn:hover { background: #143055; }
+
+  .system-line { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 6px; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); margin: 4px 0; }
+  .prefill-line { font-size: 11px; color: var(--amber-border); background: var(--amber-bg); padding: 8px 12px; border-radius: 6px; text-align: center; font-style: italic; }
+
+  .notes-toggle { font-size: 12px; color: var(--text-secondary); cursor: pointer; text-decoration: underline; }
+  .notes-panel { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 12px; color: var(--amber-border); }
+  .notes-panel h4 { margin: 0 0 4px; font-size: 12px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>Popstart — Product Launch Roadmap <span class="badge">PROTOTYPE</span></h1>
+    <div class="controls">
+      <button onclick="resetSession()">↺ Restart</button>
+      <a href="design-planner.html" style="font-size:13px;color:var(--blue);text-decoration:none;padding:6px 10px;border:1px solid var(--border);border-radius:6px;">Open Design Planner →</a>
+      <span class="notes-toggle" onclick="toggleNotes()">ⓘ About</span>
+    </div>
+  </div>
+
+  <div class="profile-bar">
+    <div class="pf-group">
+      <label for="profile-stage">Business Stage:</label>
+      <select id="profile-stage">
+        <option value="exploring">Just Exploring</option>
+        <option value="prelaunch" selected>Pre-Launch</option>
+        <option value="inbusiness">Already in Business</option>
+      </select>
+    </div>
+    <div class="pf-group">
+      <label for="profile-industry">Industry:</label>
+      <select id="profile-industry">
+        <optgroup label="Product">
+          <option value="food">Food & Beverage</option>
+          <option value="apparel">Apparel & Accessories</option>
+          <option value="health">Health & Beauty</option>
+          <option value="home">Home Goods</option>
+          <option value="toys" selected>Toys & Kids</option>
+          <option value="pet">Pet Products</option>
+          <option value="electronics">Electronics</option>
+          <option value="outdoor">Outdoor & Sports</option>
+          <option value="stationery">Stationery & Office</option>
+          <option value="crafts">Crafts & Handmade</option>
+          <option value="other-product">Other (Product)</option>
+        </optgroup>
+        <optgroup label="Service">
+          <option value="consulting">Consulting</option>
+          <option value="coaching">Coaching</option>
+          <option value="local-service">Local Service</option>
+        </optgroup>
+        <optgroup label="Digital">
+          <option value="software">Software / App</option>
+          <option value="course">Course / Content</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="pf-group">
+      <label>Business Type:</label>
+      <span class="derived" id="profile-type">Product</span>
+    </div>
+    <div id="profile-warning" class="warning" style="display:none">⚠ Module 5 is scoped to physical products — some advice may not apply</div>
+  </div>
+
+  <div id="notes" class="notes-panel hidden">
+    <h4>About this prototype</h4>
+    Scripted design prototype, not a working agent. This is the <strong>Product Launch Roadmap</strong> agent (Module 5 · Section 1). When you finish the activity and reach Coach Mode, you can hand off to the <strong>Product Design Planner</strong> with your profile pre-filled.
+  </div>
+
+  <div class="layout">
+    <div class="chat-pane">
+      <div class="chat-header">
+        <div class="dot"></div>
+        <div class="title" id="chat-title">Product Launch Roadmap</div>
+        <div class="sub" id="chat-sub">Module 5 · Section 1</div>
+      </div>
+      <div class="chat-messages" id="messages"></div>
+      <div class="input-area" id="input-area"></div>
+    </div>
+
+    <div class="cards-pane">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="inputs" onclick="switchTab('inputs')">Input Variables <span class="count" id="iv-count">0</span></button>
+        <button class="tab-btn" data-tab="cards" onclick="switchTab('cards')">Cards <span class="count" id="card-count">0</span></button>
+        <button class="tab-btn" data-tab="deliverable" onclick="switchTab('deliverable')">Deliverable</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-inputs">
+        <div class="iv-list" id="iv-list"></div>
+      </div>
+
+      <div class="tab-panel" id="tab-cards">
+        <div class="cards-pane-header">
+          <span>Your deliverable will build here</span>
+          <span><span class="mode-tag" id="mode-tag" style="display:none"></span><span class="agent-tag" id="agent-tag" style="display:none"></span></span>
+        </div>
+        <div class="cards-scroll" id="cards"></div>
+      </div>
+
+      <div class="tab-panel" id="tab-deliverable">
+        <div id="deliverable-content"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// =========================================================================
+// INDUSTRY → BUSINESS TYPE MAPPING
+// =========================================================================
+const INDUSTRY_TYPE = {
+  // Product
+  food: 'Product', apparel: 'Product', health: 'Product', home: 'Product',
+  toys: 'Product', pet: 'Product', electronics: 'Product', outdoor: 'Product',
+  stationery: 'Product', crafts: 'Product', 'other-product': 'Product',
+  // Service
+  consulting: 'Service', coaching: 'Service', 'local-service': 'Service',
+  // Digital
+  software: 'Digital', course: 'Digital',
+};
+const INDUSTRY_LABEL = {
+  food: 'Food & Beverage', apparel: 'Apparel & Accessories', health: 'Health & Beauty',
+  home: 'Home Goods', toys: 'Toys & Kids', pet: 'Pet Products',
+  electronics: 'Electronics', outdoor: 'Outdoor & Sports', stationery: 'Stationery & Office',
+  crafts: 'Crafts & Handmade', 'other-product': 'Other (Product)',
+  consulting: 'Consulting', coaching: 'Coaching', 'local-service': 'Local Service',
+  software: 'Software / App', course: 'Course / Content',
+};
+
+function updateProfileDerived() {
+  const ind = $('profile-industry').value;
+  const type = INDUSTRY_TYPE[ind] || 'Product';
+  $('profile-type').textContent = type;
+  const warn = $('profile-warning');
+  if (type !== 'Product') {
+    warn.style.display = '';
+  } else {
+    warn.style.display = 'none';
+  }
+  state.profile = state.profile || {};
+  state.profile.industry = ind;
+  state.profile.industry_label = INDUSTRY_LABEL[ind] || ind;
+  state.profile.business_type = type;
+}
+
+// =========================================================================
+// GLOSSARY
+// =========================================================================
+const GLOSSARY = {
+  "prototype": "An early, working version of your product built to test your concept before committing to full manufacturing. It does not need to be finished or beautiful.",
+  "concept": "The written statement of what your product does, who it is for, and what makes it different. A strong concept is specific enough to guide every design decision that follows.",
+  "MOQ": "Minimum Order Quantity. The smallest number of units a manufacturer will agree to produce in a single production run.",
+  "COGS": "Cost of Goods Sold. The total cost of producing one unit of a product, including materials, manufacturing, packaging, and inbound shipping.",
+  "lead time": "The amount of time between placing a production order and receiving the finished product.",
+  "margin": "The money left over after subtracting costs from revenue. Often expressed as a percentage of the sale price.",
+  "supply chain": "The network of suppliers, manufacturers, and logistics partners that moves a product from raw materials to finished goods.",
+  "compliance": "Verifying that a product meets the legal and regulatory standards required to sell it in a specific market.",
+  "DTC": "Direct-to-Consumer. A distribution model where a brand sells directly to the end customer.",
+  "wholesale": "A distribution model where a brand sells products in bulk to retailers or distributors.",
+  "marketplace": "An online platform like Amazon or Etsy where multiple sellers list products.",
+  "3PL": "Third-Party Logistics. A company hired to handle product storage, packing, and shipping on behalf of a brand.",
+  "iteration": "The process of repeatedly testing, adjusting, and improving a product based on real feedback and results.",
+  "user testing": "Putting a product in the hands of real people from your target market and observing how they use it without coaching.",
+  "production run": "A single manufacturing cycle that produces a defined quantity of finished units.",
+  "IP": "Intellectual Property. Legal ownership of a design, formula, brand, or invention.",
+  "industrial designer": "A professional who specialises in the look, feel, and usability of physical products. Different from an engineer, who focuses on how it works and is built.",
+  "CAD": "Computer-Aided Design. Software used to create detailed 3D models of a product before it is manufactured.",
+  "3D print": "A method of producing a physical model directly from a digital file. Often used to create early prototypes quickly and inexpensively.",
+  "NDA": "Non-Disclosure Agreement. A legal agreement preventing one party from sharing confidential information with others.",
+  "must-haves": "The three to five features a product absolutely needs at launch.",
+};
+
+// =========================================================================
+// PERSONAS — both agents in one persona object
+// =========================================================================
+const PERSONAS = {
+  exploring: {
+    label: "Just Exploring",
+    stage_text: "Just Exploring",
+    product_description: "I have an idea for a kids' lunch container that keeps food separate and doesn't leak. Mostly for parents who pack lunches.",
+    product_label: "Kids' compartment lunch container",
+    target_customer: "Parents of elementary-school kids who pack lunch daily and are tired of food touching or leaking.",
+    // Roadmap
+    roadmap_branch: "You're still exploring, which means you're in the right place to start. We'll help you understand the full sequence, identify where your idea currently sits, and give you a clear first step.",
+    current_stage: ["Just Have an Idea"],
+    challenge_list: ["Defining the Product"],
+    timeline: "Within 6 Months",
+    goal: "Get a Prototype Built",
+    stage_statuses: { design: "in_progress", testing: "not_started", manufacturing: "not_started", branding: "not_started", distribution: "not_started", pricing: "not_started" },
+    you_are_here: "design",
+    where_to_start_action: "Tighten your concept and find a designer.",
+    where_to_start_reason: "Nothing downstream can happen until the product is defined clearly enough to prototype.",
+    where_to_start_specialist: "Popstart Product Design Planner",
+    where_to_start_time: "est. 25 min",
+    section_priorities: [
+      { num: 1, name: "Product Design and Development", reason: "Foundational. Lock the concept and build a first prototype before anything else." },
+      { num: 2, name: "Product Testing and Safety", reason: "Children's products have regulatory standards; know what's required early." },
+      { num: 3, name: "Manufacturing", reason: "After testing — never before." },
+    ],
+    key_decisions: [
+      "What two or three features are non-negotiable for v1?",
+      "DIY first mock-up or hire a designer immediately?",
+      "Are you building this product to sell, or to validate the idea first?",
+    ],
+    quick_win: "Write a one-sentence product definition this week. Name a specific parent — not a market, an actual person — and what their lunch-packing morning looks like.",
+    glossary_terms_roadmap: ["prototype", "concept", "compliance", "user testing"],
+    coach_topics_roadmap: [
+      "Where do I actually start with just an idea?",
+      "How do I find a designer I can afford?",
+      "Should I get a patent before I show anyone?",
+    ],
+    // Design Planner
+    design_branch: "You're still in the idea stage and that's the right place to start. We'll help you define what your product is, who it's for, and what your first steps look like before you spend a dollar.",
+    p1_stage: "Idea Stage",
+    must_haves: ["Compartment dividers that don't fall out", "Leak-proof when tilted", "Dishwasher safe", "Fits in a standard lunchbox"],
+    design_support: "Industrial Designer",
+    design_timeline: "Within 6 Months",
+    stage_assessment: "You're at the idea stage. Your product is a concept — you can describe it in words, but there's nothing physical yet. That's a great place to be deliberate, because every dollar you spend before this point is a dollar you might waste.",
+    next_three_steps: [
+      { action: "Write a one-sentence product description", time: "1–2 hours", cost: "$0", reason: "Locks the scope before you spend on a designer." },
+      { action: "Sketch the concept or commission rough CAD", time: "1–2 weeks", cost: "$200–600", reason: "Industrial designer or Fiverr can produce concept sketches that turn your idea into something visual." },
+      { action: "Build a 3D-printed mock-up", time: "1–2 weeks", cost: "$50–300", reason: "Cheapest way to put something physical in your hand and test the compartment idea." },
+    ],
+    team_needs: "At idea stage, you primarily need an industrial designer to take your concept to visual. Engineering comes after. Try Upwork for affordable concept work ($200-800 first round), or 99designs for multiple design directions in parallel. IDSA's directory is good for vetted professionals if budget allows.",
+    key_questions: [
+      "What two or three features are absolute must-haves vs. nice-to-haves?",
+      "Will you build to sell, or build to validate the idea first?",
+      "What's the cheapest prototype that would still teach you something?",
+    ],
+    quick_win_design: "Write your one-sentence product description this week. Specific. 'A compartment lunch container that doesn't leak, for parents of elementary-school kids who pack daily.' Five minutes, costs nothing, sets up everything else.",
+    glossary_terms_design: ["concept", "prototype", "industrial designer", "CAD", "3D print", "must-haves", "iteration"],
+    coach_topics_design: [
+      "How do I find a good product designer on Upwork?",
+      "What's the difference between an industrial designer and an engineer?",
+      "How much does it cost to build a prototype?",
+    ],
+  },
+  prelaunch: {
+    label: "Pre-Launch",
+    stage_text: "Pre-Launch",
+    product_description: "A reusable silicone snack bag designed for parents of young children who want to reduce single-use plastic. Sealed with a leak-proof slider.",
+    product_label: "Reusable silicone snack bag",
+    target_customer: "Parents of young children (ages 2–8) who pack daily snacks and are trying to cut single-use plastic from their household routine.",
+    roadmap_branch: "You're pre-launch, so some of these stages may already be underway. Let's map what's done, what's in progress, and what needs to happen before you're ready to sell.",
+    current_stage: ["Prototype Built", "Testing Underway"],
+    challenge_list: ["Finding a Manufacturer"],
+    timeline: "Within 6 Months",
+    goal: "Find a Manufacturer",
+    stage_statuses: { design: "complete", testing: "complete", manufacturing: "in_progress", branding: "not_started", distribution: "not_started", pricing: "not_started" },
+    you_are_here: "manufacturing",
+    where_to_start_action: "Vet 3 manufacturers and request physical samples.",
+    where_to_start_reason: "Manufacturing locks in dimensions and unit cost — packaging and pricing wait on this.",
+    where_to_start_specialist: "Popstart Manufacturer Vetting Checklist",
+    where_to_start_time: "est. 25 min",
+    section_priorities: [
+      { num: 1, name: "Manufacturing", reason: "Your current centre of gravity. Get samples in hand before anything else." },
+      { num: 2, name: "Pricing", reason: "Can't price without knowing real cost per unit, which depends on manufacturer." },
+      { num: 3, name: "Packaging and Branding", reason: "Dimensions and material decisions follow manufacturing." },
+    ],
+    key_decisions: [
+      "Domestic or international manufacturing?",
+      "What MOQ can you realistically commit to for a first run?",
+      "Sign an NDA before sharing the design?",
+    ],
+    quick_win: "Request samples from 3 manufacturers this week. ThomasNet for domestic, Alibaba for international. Don't commit until something's in your hand.",
+    glossary_terms_roadmap: ["prototype", "MOQ", "COGS", "lead time", "supply chain", "IP", "production run"],
+    coach_topics_roadmap: [
+      "Can I work on packaging and manufacturing at the same time?",
+      "How long does it typically take to go from prototype to first sale?",
+      "What goes in an NDA with a manufacturer?",
+    ],
+    design_branch: "You're pre-launch, so let's make sure your development path is clear. We'll identify where you are in the design process and what needs to happen before you're ready to manufacture.",
+    p1_stage: "Prototype Built",
+    must_haves: ["Leak-proof slider seal", "Food-grade silicone (FDA-compliant)", "Dishwasher safe", "Holds 8oz minimum"],
+    design_support: "Engineer",
+    design_timeline: "Within 3 Months",
+    stage_assessment: "You have a working prototype and you've started testing. You're close to manufacturing-ready, but the gap between a hand-made prototype and a tooled production unit is where most of the engineering work happens.",
+    next_three_steps: [
+      { action: "Lock final dimensions in CAD", time: "1–2 weeks", cost: "$500–1,500", reason: "Manufacturers need precise CAD files. If your current files aren't manufacturing-grade, this is the bottleneck." },
+      { action: "Spec the silicone formulation explicitly", time: "1 week", cost: "$0 if engineer-led", reason: "FDA-compliant silicone is a specific grade. Get this in writing before you talk to any manufacturer." },
+      { action: "Run a final user-testing round with the latest prototype", time: "2 weeks", cost: "$100–500", reason: "Last chance to catch design issues before you commit to tooling. Five to ten target users." },
+    ],
+    team_needs: "You need an engineer who's worked with silicone or food-contact products. The industrial designer phase is mostly done. Look on Upwork for product engineers with food-contact experience (filter by reviews on similar projects). IDSA's directory has more vetted senior engineers at higher rates. Avoid generic 'mechanical engineers' who haven't worked with silicone.",
+    key_questions: [
+      "Is your current prototype's seal mechanism manufacturable at scale, or only by hand?",
+      "Do you have a documented FDA-compliant silicone spec?",
+      "What's the actual cost-per-unit at your target MOQ?",
+    ],
+    quick_win_design: "Write down the exact silicone grade you need (food-grade, FDA-compliant, with hardness/durometer spec if you have it) this week. Email it to your engineer and ask them to confirm. Single document, but it's the gate to every manufacturer conversation.",
+    glossary_terms_design: ["prototype", "CAD", "iteration", "must-haves", "industrial designer", "IP", "NDA"],
+    coach_topics_design: [
+      "What should I have ready before I approach an engineer?",
+      "Do I need a patent before I show my idea to a manufacturer?",
+      "How much does it cost to build a prototype?",
+    ],
+  },
+  inbusiness: {
+    label: "Already in Business",
+    stage_text: "Already in Business",
+    product_description: "Organic cotton baby blankets, sold direct through my Shopify store for the last 18 months. Sales are okay but margins feel thin.",
+    product_label: "Organic cotton baby blankets",
+    target_customer: "First-time parents and grandparents shopping for gifts, who value organic materials and are willing to pay a premium for them.",
+    roadmap_branch: "You already have a product in market. Let's use the full sequence to audit where you are, identify any stages that were skipped or need revisiting, and map what's next for your business.",
+    current_stage: ["Prototype Built", "Manufacturer Identified", "Packaging Designed", "Selling Now"],
+    challenge_list: ["Understanding Compliance"],
+    timeline: "Already Launched",
+    goal: "Audit and Fix Gaps",
+    stage_statuses: { design: "complete", testing: "not_started", manufacturing: "complete", branding: "complete", distribution: "complete", pricing: "in_progress" },
+    you_are_here: "pricing",
+    where_to_start_action: "Fill the testing gap — get your blankets through accredited safety testing.",
+    where_to_start_reason: "Selling children's products without documented safety testing is a regulatory exposure, regardless of how trusted your supplier is.",
+    where_to_start_specialist: "Popstart Testing and Compliance Checker",
+    where_to_start_time: "est. 30 min",
+    section_priorities: [
+      { num: 1, name: "Product Testing and Safety", reason: "Highest exposure. Children's products require specific certifications." },
+      { num: 2, name: "Pricing", reason: "Thin margins after 18 months means it's time to revisit the math." },
+      { num: 3, name: "Distribution", reason: "DTC only may be limiting growth — worth evaluating wholesale or marketplaces." },
+    ],
+    key_decisions: [
+      "Raise prices now or wait until next production run?",
+      "Stay DTC or add a wholesale channel?",
+      "Pursue ASTM certification on the existing inventory or just on the next run?",
+    ],
+    quick_win: "Pull your last 90 days of margin data by SKU. If anything's below 40% gross margin, that's the conversation for next week.",
+    glossary_terms_roadmap: ["COGS", "margin", "DTC", "wholesale", "marketplace", "compliance", "iteration"],
+    coach_topics_roadmap: [
+      "I am already selling but I feel like I missed some steps. How do I find the gaps?",
+      "I skipped testing and went straight to manufacturing. What do I do now?",
+      "How do I raise prices without losing customers?",
+    ],
+    design_branch: "You already have a product. Let's look at where it stands. We'll assess your design and development process and identify any gaps worth closing before your next version or launch.",
+    p1_stage: "Ready to Manufacture",
+    must_haves: ["GOTS-certified organic cotton", "Machine washable", "Standard receiving blanket size (30x30 inches)", "Compliant for ages 0+"],
+    design_support: "I Already Have a Team",
+    design_timeline: "Just Exploring",
+    stage_assessment: "You have a product in market, which means your design is proven from a customer standpoint. The audit angle is different — instead of 'what do I need to do', it's 'what did I skip and what should I revisit before v2'.",
+    next_three_steps: [
+      { action: "Audit existing design documentation", time: "1 week", cost: "$0", reason: "Pull your CAD files, supplier specs, and testing records. If anything's missing or out of date, that's the priority gap." },
+      { action: "Identify what you'd change in v2", time: "1 week", cost: "$0", reason: "List the design changes customers have asked for or that would meaningfully improve cost or quality. Triage them." },
+      { action: "Consult with a compliance specialist on testing gaps", time: "2–4 weeks", cost: "$500–2,000", reason: "Specifically for children's product certification — flag this as the testing gap your Roadmap surfaced." },
+    ],
+    team_needs: "You already have a team, which is the right answer for your stage. The gap to check: whether your existing team includes anyone with current compliance knowledge for children's products. If not, that's a specific hire (or contractor) before v2. Avoid expanding the design team itself unless you have a clear v2 direction.",
+    key_questions: [
+      "What are the top three design issues your existing customers have raised?",
+      "Is your CAD documentation current with what's actually being manufactured?",
+      "Does anyone on your team own the compliance documentation?",
+    ],
+    quick_win_design: "Pull your last 90 days of customer service tickets and tag every one that's about product design (vs shipping, vs pricing). The pattern in that list is your v2 brief — it's already written, you just need to read it.",
+    glossary_terms_design: ["prototype", "iteration", "CAD", "compliance", "industrial designer"],
+    coach_topics_design: [
+      "What should I have ready before approaching an engineer for a v2?",
+      "How do I find a compliance specialist for children's products?",
+      "Do I need a patent before sharing my v2 designs?",
+    ],
+  },
+};
+
+// =========================================================================
+// EFFECTIVE PERSONA — when user uses example, return persona unchanged.
+// When user provides their own input, derive a persona-shaped object from
+// their inputs so output generation can use it.
+// =========================================================================
+function getEffectivePersona() {
+  const persona = PERSONAS[state.persona];
+  const ue = state.used_example;
+  // Pure-example run: P1, P2, P3 all came from Use Example buttons.
+  // (P4 and P5 are dropdowns without example buttons — their value alone doesn't indicate example use.)
+  const allFromExample = ue.p1 === true && ue.p2 === true && ue.p3 === true;
+  if (allFromExample) return persona;
+
+  return state.agent === 'roadmap' ? deriveRoadmapPersona(persona) : deriveDesignPersona(persona);
+}
+
+function shortLabel(text, maxWords) {
+  let cleaned = text.trim();
+  cleaned = cleaned.replace(/^(my company|our company|i'?ve been|we'?ve been|i'?m|i am|we'?re|we are|my|our)\s+/i, '');
+  cleaned = cleaned.replace(/^(making|building|creating|developing|designing|working on|launching|selling|offering|sells|makes|sell|make)\s+/i, '');
+  cleaned = cleaned.replace(/^(a|an|the)\s+/i, '');
+  const words = cleaned.split(/\s+/).slice(0, maxWords || 5);
+  let label = words.join(' ').replace(/[,.;:].*$/, '').trim();
+  // Iteratively strip trailing fluff (designed, made, built; or prepositions like for, with, to)
+  let prev;
+  do {
+    prev = label;
+    label = label.replace(/\s+(designed|made|built|created|developed|engineered|crafted|formulated)$/i, '');
+    label = label.replace(/\s+(for|with|that|which|and|to|of|in|on|by|from)$/i, '');
+  } while (label !== prev);
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function deriveRoadmapPersona(persona) {
+  const p1 = state.used_example.p1 ? persona.product_description : (state.inputs.p1 || persona.product_description);
+  const p2 = state.used_example.p2 ? persona.current_stage : (state.inputs.p2 || persona.current_stage);
+  const p3 = state.used_example.p3 ? persona.challenge_list : (state.inputs.p3 || persona.challenge_list);
+  const p4 = state.used_example.p4 ? persona.timeline : (state.inputs.p4 || persona.timeline);
+  const p5 = state.used_example.p5 ? persona.goal : (state.inputs.p5 || persona.goal);
+
+  const stageOrder = [
+    { key: 'design', label: 'Just Have an Idea', alt: 'Concept Defined', display: 'Design' },
+    { key: 'design', label: 'Concept Defined', display: 'Design' },
+    { key: 'design', label: 'Prototype Built', display: 'Design' },
+    { key: 'testing', label: 'Testing Underway', display: 'Testing' },
+    { key: 'manufacturing', label: 'Manufacturer Identified', display: 'Manufacturing' },
+    { key: 'branding', label: 'Packaging Designed', display: 'Packaging & Branding' },
+    { key: 'distribution', label: 'Selling Now', display: 'Distribution' },
+  ];
+  const stageKeys = ['design', 'testing', 'manufacturing', 'branding', 'distribution', 'pricing'];
+
+  // Compute stage_statuses from P2 selections
+  const selected = new Set(p2);
+  const statuses = {};
+  for (const k of stageKeys) statuses[k] = 'not_started';
+  if (selected.has('Just Have an Idea')) statuses.design = 'in_progress';
+  if (selected.has('Concept Defined')) statuses.design = 'in_progress';
+  if (selected.has('Prototype Built')) statuses.design = 'complete';
+  if (selected.has('Testing Underway')) { statuses.design = 'complete'; statuses.testing = 'in_progress'; }
+  if (selected.has('Manufacturer Identified')) { statuses.design = 'complete'; statuses.testing = 'complete'; statuses.manufacturing = 'in_progress'; }
+  if (selected.has('Packaging Designed')) { statuses.design = 'complete'; statuses.manufacturing = 'complete'; statuses.branding = 'complete'; }
+  if (selected.has('Selling Now')) { for (const k of stageKeys) if (k !== 'pricing') statuses[k] = 'complete'; statuses.pricing = 'in_progress'; }
+
+  // "You are here" = first stage that's not complete
+  let youAreHere = stageKeys.find(k => statuses[k] !== 'complete') || 'design';
+  if (statuses[youAreHere] === 'not_started') {
+    // promote to in_progress for display
+    statuses[youAreHere] = 'in_progress';
+  }
+
+  const productLabel = shortLabel(p1);
+
+  // Where to Start — derived from the current stage
+  const whereToStart = buildWhereToStart(youAreHere, p3, p4);
+
+  // Section Priorities — derived
+  const priorities = buildPriorities(youAreHere, p3);
+
+  // Key Decisions — derived
+  const decisions = buildKeyDecisions(youAreHere, p3);
+
+  // Quick Win — derived
+  const quickWin = buildQuickWin(youAreHere, p4, p5);
+
+  return {
+    ...persona,  // keep glossary terms, coach topics, stage_text, etc.
+    product_description: p1,
+    product_label: productLabel,
+    current_stage: p2,
+    challenge_list: p3,
+    timeline: p4,
+    goal: p5,
+    stage_statuses: statuses,
+    you_are_here: youAreHere,
+    where_to_start_action: whereToStart.action,
+    where_to_start_reason: whereToStart.reason,
+    where_to_start_specialist: whereToStart.specialist,
+    where_to_start_time: whereToStart.time,
+    section_priorities: priorities,
+    key_decisions: decisions,
+    quick_win: quickWin,
+  };
+}
+
+function buildWhereToStart(currentStage, challenges, timeline) {
+  const map = {
+    design: {
+      action: "Lock down your product concept and start a prototype.",
+      reason: "Nothing downstream can move until the product is defined clearly enough to prototype and test.",
+      specialist: "Popstart Product Design Planner",
+      time: "est. 25 min",
+    },
+    testing: {
+      action: "Run functional and safety testing on your prototype.",
+      reason: "Testing surfaces problems while they're still cheap to fix. Manufacturing assumes the product works.",
+      specialist: "Popstart Testing and Compliance Checker",
+      time: "est. 30 min",
+    },
+    manufacturing: {
+      action: "Vet 3 manufacturers and request physical samples.",
+      reason: "Manufacturing locks in dimensions and unit cost — packaging and pricing wait on this.",
+      specialist: "Popstart Manufacturer Vetting Checklist",
+      time: "est. 25 min",
+    },
+    branding: {
+      action: "Define your brand identity and design your packaging.",
+      reason: "Packaging requires final dimensions and materials from manufacturing. Brand identity can be developed alongside.",
+      specialist: "Popstart Brand and Packaging Planner",
+      time: "est. 20 min",
+    },
+    distribution: {
+      action: "Choose your primary distribution channel and validate the unit economics.",
+      reason: "Where your customer already shops drives this choice. Each channel has different fees and margin implications.",
+      specialist: "Popstart Distribution Channel Planner",
+      time: "est. 25 min",
+    },
+    pricing: {
+      action: "Calculate your true cost per unit and set a price grounded in real math.",
+      reason: "Pricing without knowing your full cost structure means selling below your margin threshold without realising it.",
+      specialist: "Popstart Product Pricing Calculator",
+      time: "est. 20 min",
+    },
+  };
+  return map[currentStage] || map.design;
+}
+
+function buildPriorities(currentStage, challenges) {
+  // Build top 3 from the current stage and forward
+  const allStages = [
+    { num: 0, key: 'design', name: 'Product Design and Development', reason: 'Foundational. Lock the concept and prototype before anything else.' },
+    { num: 0, key: 'testing', name: 'Product Testing and Safety', reason: 'Catch problems while they\'re still cheap to fix.' },
+    { num: 0, key: 'manufacturing', name: 'Manufacturing', reason: 'Once design is proven, manufacturing locks in dimensions and cost.' },
+    { num: 0, key: 'branding', name: 'Packaging and Branding', reason: 'Follows manufacturing — packaging needs final dimensions.' },
+    { num: 0, key: 'distribution', name: 'Distribution', reason: 'Where customers buy your product. Drives margin and operational complexity.' },
+    { num: 0, key: 'pricing', name: 'Pricing', reason: 'Set with real cost data, not guesses.' },
+  ];
+  const startIdx = allStages.findIndex(s => s.key === currentStage);
+  const slice = allStages.slice(startIdx, startIdx + 3);
+  return slice.map((s, i) => ({ num: i + 1, name: s.name, reason: s.reason }));
+}
+
+function buildKeyDecisions(currentStage, challenges) {
+  const byStage = {
+    design: [
+      "What two or three features are non-negotiable for v1?",
+      "DIY first mock-up or hire a designer immediately?",
+      "Are you building this to sell, or to validate the idea first?",
+    ],
+    testing: [
+      "Which compliance standards apply to your product?",
+      "Run testing in-house or use an accredited lab?",
+      "How many user testers do you need to make the data meaningful?",
+    ],
+    manufacturing: [
+      "Domestic or international manufacturing?",
+      "What MOQ can you realistically commit to for a first run?",
+      "Sign an NDA before sharing the design?",
+    ],
+    branding: [
+      "What feeling do you want a customer to have when they see it?",
+      "Sustainable packaging materials, or prioritise cost?",
+      "Standard or custom packaging design?",
+    ],
+    distribution: [
+      "DTC, wholesale, or marketplace first?",
+      "Fulfil yourself or use a 3PL?",
+      "Single channel to start, or test multiple in parallel?",
+    ],
+    pricing: [
+      "Cost-plus pricing or value-based pricing?",
+      "Premium positioning or competitive entry price?",
+      "Raise prices now or wait until next production run?",
+    ],
+  };
+  return byStage[currentStage] || byStage.design;
+}
+
+function buildQuickWin(currentStage, timeline, goal) {
+  const byStage = {
+    design: "Write a one-sentence product description this week. Specific. Who it's for, what it does, what makes it different. Five minutes, costs nothing, sets up everything else.",
+    testing: "Look up which compliance standards apply to your product category this week. Single search, single document. Knowing what you need before testing starts saves real money.",
+    manufacturing: "Request samples from 3 manufacturers this week. ThomasNet for domestic, Alibaba for international. Don't commit until something's in your hand.",
+    branding: "Pull up the packaging of three products your target customer already buys. What's similar across all three? That's your starting visual direction.",
+    distribution: "Calculate your true margin per unit if you sold through your top candidate channel. Fees, shipping, discounts included. If the math doesn't work, the channel isn't right yet.",
+    pricing: "Pull your COGS and operating expenses, calculate cost per unit. That's your floor. Every pricing conversation starts here.",
+  };
+  return byStage[currentStage] || byStage.design;
+}
+
+function deriveDesignPersona(persona) {
+  const p1 = state.used_example.p1 ? { text: persona.product_description, stage: persona.p1_stage } : (state.inputs.p1 || { text: persona.product_description, stage: persona.p1_stage });
+  const p2 = state.used_example.p2 ? persona.target_customer : (state.inputs.p2 || persona.target_customer);
+  const p3 = state.used_example.p3 ? persona.must_haves : (state.inputs.p3 || persona.must_haves);
+  const p4 = state.used_example.p4 ? persona.design_support : (state.inputs.p4 || persona.design_support);
+  const p5 = state.used_example.p5 ? persona.design_timeline : (state.inputs.p5 || persona.design_timeline);
+
+  const productLabel = shortLabel(p1.text);
+  const stage = p1.stage;
+  const customer = p2;
+  const features = p3;
+  const support = p4;
+  const timeline = p5;
+
+  return {
+    ...persona,
+    product_description: p1.text,
+    product_label: productLabel,
+    p1_stage: stage,
+    target_customer: customer,
+    must_haves: features,
+    design_support: support,
+    design_timeline: timeline,
+    stage_assessment: buildStageAssessment(stage),
+    next_three_steps: buildNextSteps(stage, features, support, timeline),
+    team_needs: buildTeamNeeds(stage, support, features),
+    key_questions: buildKeyQuestions(stage, customer, features),
+    quick_win_design: buildDesignQuickWin(stage, features, productLabel),
+  };
+}
+
+function buildStageAssessment(stage) {
+  const map = {
+    "Idea Stage": "You're at the idea stage. Your product is a concept — you can describe it in words, but there's nothing physical yet. That's the right place to be deliberate, because every dollar you spend before this point is a dollar you might waste.",
+    "Concept Written": "You have a written concept. The next step is moving from words to something visual or physical. This is the cheapest stage to test assumptions before they get expensive.",
+    "Prototype Built": "You have a working prototype, which means you can put something physical in front of real users. You're past the riskiest stage — now the work is refining it for manufacturing.",
+    "Ready to Manufacture": "You're at the manufacturing-ready stage. Your design is locked. The work from here is about finding the right production partner, protecting your IP, and getting unit economics right.",
+  };
+  return map[stage] || map["Idea Stage"];
+}
+
+function buildNextSteps(stage, features, support, timeline) {
+  const fastTrack = timeline === "As Soon As Possible";
+  const isMaterialHeavy = features.some(f => /silicone|cotton|wood|plastic|metal|fabric|material|food.?grade|fda/i.test(f));
+  const isElectronic = features.some(f => /electric|battery|wireless|bluetooth|app|sensor|charging/i.test(f));
+
+  const stepsByStage = {
+    "Idea Stage": [
+      { action: "Write a one-sentence product description", time: "1–2 hours", cost: "$0", reason: "Lock the scope before you spend on a designer. If you can't say it simply, the design isn't ready yet." },
+      { action: support === "I Already Have a Team" ? "Brief your team on the concept" : "Sketch the concept or commission rough concept art", time: "1–2 weeks", cost: support === "I Already Have a Team" ? "$0" : "$200–600", reason: "Turn the idea into something visual you can discuss with others and refine." },
+      { action: "Build a low-cost first prototype", time: "1–2 weeks", cost: "$50–500", reason: "A 3D-printed mock-up or handmade version. Cheapest way to learn whether the idea works." },
+    ],
+    "Concept Written": [
+      { action: support === "Industrial Designer" || support === "Not Sure Yet" ? "Hire an industrial designer for concept-to-sketch work" : "Brief your designer on must-have features", time: "2–4 weeks", cost: "$500–2,500", reason: "A designer turns your written concept into visuals and materials decisions." },
+      { action: "Build a working prototype", time: "2–4 weeks", cost: isElectronic ? "$1,000–5,000" : "$200–1,500", reason: "Something physical you can hand to a user. Doesn't need to be pretty — needs to work enough to learn from." },
+      { action: "Run a small round of user testing", time: "1–2 weeks", cost: "$100–500", reason: "5–10 people from your target market. What confuses them tells you as much as what they love." },
+    ],
+    "Prototype Built": [
+      { action: "Lock final dimensions and specs in CAD", time: "1–2 weeks", cost: "$500–1,500", reason: "Manufacturers need manufacturing-grade files. If your current files aren't there, this is the bottleneck." },
+      { action: isMaterialHeavy ? "Spec your materials explicitly with grade and source" : "Document your bill of materials", time: "1 week", cost: "$0 if engineer-led", reason: "Every manufacturer conversation will ask for this. Get it in writing before you reach out." },
+      { action: "Run a final user-testing round with the latest prototype", time: "2 weeks", cost: "$100–500", reason: "Last chance to catch design issues before you commit to tooling." },
+    ],
+    "Ready to Manufacture": [
+      { action: "Vet 3 manufacturers and request samples", time: "3–4 weeks", cost: "$500–2,000 (samples)", reason: "Don't commit on price alone. Communication, sample quality, and references matter equally." },
+      { action: "Get an NDA signed before sharing design files", time: "1 week", cost: "$0–500", reason: "Protect your IP before anything proprietary leaves your hands." },
+      { action: "Run a small first production batch", time: "6–12 weeks", cost: "Variable by MOQ", reason: "Test the manufacturing relationship and real market demand before committing to large orders." },
+    ],
+  };
+  let steps = stepsByStage[stage] || stepsByStage["Idea Stage"];
+  if (fastTrack) {
+    steps = steps.map(s => ({ ...s, reason: s.reason + " (Compressed timeline — prepare for higher cost or smaller scope.)" }));
+  }
+  return steps;
+}
+
+function buildTeamNeeds(stage, support, features) {
+  const platforms = "Try Upwork for affordable early work ($30–80/hr typical), LinkedIn for more senior talent, or IDSA's directory for vetted industrial designers. For multiple design directions, 99designs runs contests.";
+  if (support === "I Already Have a Team") {
+    return "You already have a team, which is the right answer for your stage. The gap to check: whether the existing team has current expertise for your product category. If not, that's a specific contractor or hire before the next stage. Avoid expanding the team itself unless you have a clear direction.";
+  }
+  if (support === "Not Sure Yet") {
+    return "Worth knowing the distinction — an industrial designer focuses on how a product looks, feels, and is used. An engineer focuses on how it actually works and gets built. Most physical products need both at some stage. Based on your stage, start with an industrial designer for concept work. " + platforms;
+  }
+  const supportText = {
+    "Industrial Designer": "You need an industrial designer to take your concept to visual and material decisions. ",
+    "Engineer": "You need an engineer with experience in your product category — the materials and mechanisms matter more than general engineering ability. ",
+    "CAD Specialist": "A CAD specialist is the right call when the design is mostly locked and you need manufacturing-grade files. ",
+    "Prototype Builder": "A prototype builder turns specs into physical samples. Cheaper than a full engineering engagement, but limited to building what you've already designed. ",
+  };
+  return (supportText[support] || supportText["Industrial Designer"]) + platforms;
+}
+
+function buildKeyQuestions(stage, customer, features) {
+  const generic = [
+    "Which features in your list are absolute must-haves vs. nice-to-haves?",
+    "What's the cheapest version that would still teach you what you need to learn?",
+    "Who specifically on your team or in your network has done this stage before?",
+  ];
+  const byStage = {
+    "Idea Stage": [
+      "Can you describe the product in one sentence that names a specific customer?",
+      "What's the closest existing product, and what do you do differently?",
+      "Will you build to sell, or build to validate the idea first?",
+    ],
+    "Concept Written": [
+      "Have you tested the concept with 5 people from your target market?",
+      "Which feature, if dropped, would still leave a viable v1?",
+      "What materials decisions matter most for cost or compliance?",
+    ],
+    "Prototype Built": [
+      "Is your seal/mechanism/key feature manufacturable at scale, or only by hand?",
+      "Do you have documented material specs that a manufacturer can quote against?",
+      "What's the target cost-per-unit at your expected MOQ?",
+    ],
+    "Ready to Manufacture": [
+      "Have you signed NDAs with the manufacturers you're talking to?",
+      "Do you have references from past customers of your top-choice manufacturer?",
+      "Is your first production run sized to validate the market or to maximise margin?",
+    ],
+  };
+  return byStage[stage] || generic;
+}
+
+function buildDesignQuickWin(stage, features, productLabel) {
+  const byStage = {
+    "Idea Stage": `Write your one-sentence product description for ${productLabel.toLowerCase()} this week. Specific. Five minutes, costs nothing, sets up everything else.`,
+    "Concept Written": `Take your concept and ${features && features.length ? `the top 2 must-haves (${features.slice(0, 2).join(', ')})` : 'your top features'} and send a one-paragraph brief to 3 designers on Upwork this week. Real quotes are better than estimates.`,
+    "Prototype Built": `Document your top 3 design decisions and the reasoning behind each, in one page. Every manufacturer or engineer conversation will ask for this. Better to write it now than under pressure.`,
+    "Ready to Manufacture": `Pull together a one-page manufacturer brief: product description, target MOQ, must-have specs, target unit cost. Email it to 3 manufacturers this week. Don't wait for them to ask.`,
+  };
+  return byStage[stage] || byStage["Idea Stage"];
+}
+let state = {
+  agent: 'roadmap',
+  persona: 'prelaunch',
+  profile: { industry: 'toys', industry_label: 'Toys & Kids', business_type: 'Product' },
+  mode: null,
+  inputs: {},
+  used_example: {},
+  messages: [],
+  cards: {},
+  in_coach_mode: false,
+  profile_pre_filled: false,
+  active_tab: 'inputs',
+  deliverable_ready: false,
+};
+
+function $(id) { return document.getElementById(id); }
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// =========================================================================
+// GLOSSARY RENDERING
+// =========================================================================
+function addGlossary(text, alreadyUsed) {
+  const used = alreadyUsed || new Set();
+  let result = escapeHtml(text);
+  const terms = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
+  for (const term of terms) {
+    if (used.has(term.toLowerCase())) continue;
+    const regex = new RegExp(`\\b(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'i');
+    const m = result.match(regex);
+    if (m) {
+      const matched = m[0];
+      const def = GLOSSARY[term];
+      const replacement = `<span class="gloss" tabindex="0">${matched}<span class="tooltip"><strong>${escapeHtml(term)}</strong>${escapeHtml(def)}</span></span>`;
+      result = result.replace(regex, replacement);
+      used.add(term.toLowerCase());
+    }
+  }
+  return result;
+}
+
+// =========================================================================
+// RENDERING
+// =========================================================================
+function switchTab(tab) {
+  state.active_tab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
+  if (tab === 'inputs') renderInputVariables();
+  if (tab === 'cards') renderCards();
+  if (tab === 'deliverable') renderDeliverable();
+}
+
+function renderInputVariables() {
+  const container = $('iv-list');
+  if (!container) return;
+  const rows = [];
+
+  // Always-show profile rows
+  const persona = PERSONAS[state.persona];
+  rows.push({ label: 'Business Stage', value: persona.label, source: 'Profile (dropdown above)' });
+  rows.push({ label: 'Industry', value: state.profile.industry_label || '—', source: 'Profile (dropdown above)' });
+  rows.push({ label: 'Business Type', value: state.profile.business_type || '—', source: 'Derived from Industry' });
+
+  // Agent-specific prompts
+  if (state.agent === 'roadmap') {
+    rows.push({ label: 'Depth Mode', value: state.mode ? state.mode.toUpperCase() : null, source: 'Selected at session open' });
+    rows.push({ label: 'P1 — Product Description', value: state.inputs.p1, source: state.used_example.p1 ? 'From "Use example"' : (state.inputs.p1 ? 'User-entered' : null) });
+    rows.push({ label: 'P2 — Current Stage(s)', value: state.inputs.p2 ? (Array.isArray(state.inputs.p2) ? state.inputs.p2.join(', ') : state.inputs.p2) : null, source: state.used_example.p2 ? 'From "Use example"' : (state.inputs.p2 ? 'User-selected' : null) });
+    rows.push({ label: 'P3 — Current Challenges', value: state.inputs.p3 ? (Array.isArray(state.inputs.p3) ? state.inputs.p3.join(', ') : state.inputs.p3) : null, source: state.used_example.p3 ? 'From "Use example"' : (state.inputs.p3 ? 'User-selected' : null) });
+    rows.push({ label: 'P4 — Timeline', value: state.inputs.p4, source: state.inputs.p4 ? 'User-selected' : null });
+    rows.push({ label: 'P5 — Primary Goal', value: state.inputs.p5, source: state.inputs.p5 ? 'User-selected' : null });
+  } else {
+    rows.push({ label: 'Depth Mode', value: state.mode ? state.mode.toUpperCase() : null, source: 'Selected at session open' });
+    const p1 = state.inputs.p1;
+    rows.push({ label: 'P1 — Product & Stage', value: p1 ? (typeof p1 === 'object' ? `${p1.text} (Stage: ${p1.stage})` : p1) : null, source: state.used_example.p1 ? 'From "Use example"' : (p1 ? 'User-entered' : null) });
+    rows.push({ label: 'P2 — Target Customer', value: state.inputs.p2, source: state.used_example.p2 ? 'From "Use example"' : (state.inputs.p2 ? 'User-entered' : null) });
+    rows.push({ label: 'P3 — Must-Have Features', value: state.inputs.p3 ? (Array.isArray(state.inputs.p3) ? state.inputs.p3.join(', ') : state.inputs.p3) : null, source: state.used_example.p3 ? 'From "Use example"' : (state.inputs.p3 ? 'User-entered' : null) });
+    rows.push({ label: 'P4 — Design Support', value: state.inputs.p4, source: state.inputs.p4 ? 'User-selected' : null });
+    rows.push({ label: 'P5 — Timeline Goal', value: state.inputs.p5, source: state.inputs.p5 ? 'User-selected' : null });
+  }
+
+  container.innerHTML = '';
+  for (const r of rows) {
+    const div = document.createElement('div');
+    div.className = `iv-row ${r.value ? '' : 'empty'}`;
+    div.innerHTML = `
+      <div class="iv-label">${escapeHtml(r.label)}</div>
+      <div class="iv-value">${r.value ? escapeHtml(r.value) : '<em>not yet provided</em>'}</div>
+      ${r.source ? `<div class="iv-source">${escapeHtml(r.source)}</div>` : ''}
+    `;
+    container.appendChild(div);
+  }
+  // Update count
+  const filled = rows.filter(r => r.value).length;
+  $('iv-count').textContent = filled;
+}
+
+function renderDeliverable() {
+  const container = $('deliverable-content');
+  if (!container) return;
+  if (!state.deliverable_ready) {
+    container.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--text-secondary);font-size:14px;">
+      <p style="margin:0 0 10px;font-weight:600;">Your deliverable will appear here once the activity is complete.</p>
+      <p style="margin:0;font-size:13px;">The Deliverable view is a full-prose, exportable version of your roadmap — each section includes rationale, method, and example, designed to be the document you keep and act on.</p>
+    </div>`;
+    return;
+  }
+  const persona = getEffectivePersona();
+  if (state.agent === 'roadmap') container.innerHTML = renderRoadmapDeliverable(persona);
+  else container.innerHTML = renderDesignDeliverable(persona);
+}
+
+function renderMessages() {
+  const container = $('messages');
+  container.innerHTML = '';
+  const usedTerms = new Set();
+  for (const m of state.messages) {
+    if (m.type === 'system') {
+      const div = document.createElement('div');
+      div.className = 'system-line';
+      div.textContent = m.text;
+      container.appendChild(div);
+      continue;
+    }
+    if (m.type === 'prefill_notice') {
+      const div = document.createElement('div');
+      div.className = 'prefill-line';
+      div.textContent = m.text;
+      container.appendChild(div);
+      continue;
+    }
+    if (m.type === 'coach_banner') {
+      const div = document.createElement('div');
+      div.className = 'coach-banner';
+      div.innerHTML = `
+        <h3>Coach / Brainstorm Mode</h3>
+        <p>${escapeHtml(m.text)}</p>
+        <div class="coach-suggestions">
+          ${m.suggestions.map((s, i) => `<button class="coach-suggestion" onclick="handleCoachClick(${i})">${escapeHtml(s)}</button>`).join('')}
+        </div>
+      `;
+      container.appendChild(div);
+      continue;
+    }
+    if (m.type === 'handoff_banner') {
+      const div = document.createElement('div');
+      div.className = 'handoff-banner';
+      div.innerHTML = `
+        <h3>Continue to ${escapeHtml(m.agent_name)}?</h3>
+        <p>${escapeHtml(m.text)}</p>
+        <button class="handoff-btn" onclick="handoffTo('${m.agent_id}')">Continue to ${escapeHtml(m.agent_name)} →</button>
+      `;
+      container.appendChild(div);
+      continue;
+    }
+    if (m.type === 'pdf') {
+      container.appendChild(renderPdfPreview(m.persona, m.agent));
+      continue;
+    }
+    const div = document.createElement('div');
+    div.className = `msg ${m.role}`;
+    const html = m.role === 'agent' ? addGlossary(m.text, usedTerms) : escapeHtml(m.text);
+    const labelText = m.role === 'agent' ? (m.agent_label || 'Popstart') : 'You';
+    div.innerHTML = `<div class="label">${escapeHtml(labelText)}</div><div class="bubble">${html}</div>`;
+    container.appendChild(div);
+  }
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderCards() {
+  const container = $('cards');
+  container.innerHTML = '';
+  let cardDefs;
+  if (state.agent === 'roadmap') {
+    cardDefs = [
+      { num: 1, title: "Stage Progress Tracker", placeholder: "Your stage map will appear here." },
+      { num: 2, title: "Where to Start", placeholder: "Your starting point will appear here." },
+      { num: 3, title: "Section Priorities", placeholder: "Your section priorities will appear here." },
+      { num: 4, title: "Stage-by-Stage Summary", placeholder: "Stage summaries will appear here." },
+      { num: 5, title: "Key Decisions Ahead", placeholder: "Your key decisions will appear here." },
+      { num: 6, title: "Quick Win", placeholder: "Your quick win will appear here." },
+      { num: 7, title: "Terms in Your Roadmap", placeholder: "Glossary terms used will be collected here." },
+    ];
+  } else {
+    cardDefs = [
+      { num: 1, title: "Stage Assessment", placeholder: "Your stage assessment will appear here." },
+      { num: 2, title: "Next Three Steps", placeholder: "Your next three steps will appear here." },
+      { num: 3, title: "Team Needs", placeholder: "Your team needs will appear here." },
+      { num: 4, title: "Key Questions to Answer", placeholder: "Your open questions will appear here." },
+      { num: 5, title: "Quick Win", placeholder: "Your quick win will appear here." },
+      { num: 6, title: "Terms in Your Plan", placeholder: "Glossary terms used will be collected here." },
+    ];
+  }
+  for (const def of cardDefs) {
+    const content = state.cards[def.num];
+    const div = document.createElement('div');
+    div.className = `card ${content ? 'populated' : 'placeholder'}`;
+    div.innerHTML = `
+      <div class="card-title"><span class="num">${def.num}</span> ${def.title}</div>
+      <div class="card-content">${content || `<em>${def.placeholder}</em>`}</div>
+    `;
+    container.appendChild(div);
+  }
+  // Update count badge
+  const cc = $('card-count');
+  if (cc) {
+    const filled = Object.values(state.cards).filter(c => c).length;
+    cc.textContent = filled;
+  }
+}
+
+function renderTrackerSVG(persona) {
+  const stages = [
+    { key: 'design', name: '1. Design' },
+    { key: 'testing', name: '2. Testing' },
+    { key: 'manufacturing', name: '3. Mfg.' },
+    { key: 'branding', name: '4. Brand' },
+    { key: 'distribution', name: '5. Distrib.' },
+    { key: 'pricing', name: '6. Pricing' },
+  ];
+  const statusColors = {
+    complete: { fill: 'var(--teal-bg)', border: 'var(--teal-border)', text: 'var(--teal-border)', label: 'Complete', strokeWidth: 0.5 },
+    in_progress: { fill: 'var(--amber-bg)', border: 'var(--amber-border)', text: 'var(--amber-border)', label: 'In progress', strokeWidth: 1.5 },
+    not_started: { fill: 'var(--gray-bg)', border: 'var(--gray-border)', text: 'var(--text-secondary)', label: 'Not started', strokeWidth: 0.5 },
+  };
+  const tiles = stages.map((s, i) => {
+    const status = persona.stage_statuses[s.key];
+    const sc = statusColors[status];
+    const x = 10 + i * 95;
+    const isHere = s.key === persona.you_are_here;
+    const height = isHere ? 90 : 76;
+    return `
+      <g>
+        <rect x="${x}" y="10" width="88" height="${height}" rx="8" fill="${sc.fill}" stroke="${sc.border}" stroke-width="${sc.strokeWidth}"/>
+        <text x="${x + 44}" y="34" text-anchor="middle" font-size="13" font-weight="600" fill="${sc.text}" font-family="-apple-system, sans-serif">${s.name}</text>
+        <text x="${x + 44}" y="54" text-anchor="middle" font-size="11" fill="${sc.text}" font-family="-apple-system, sans-serif">${sc.label}</text>
+        ${isHere ? `<text x="${x + 44}" y="76" text-anchor="middle" font-size="10" font-weight="600" fill="${sc.text}" font-family="-apple-system, sans-serif">← you are here</text>` : ''}
+      </g>
+    `;
+  }).join('');
+  return `
+    <svg width="100%" viewBox="0 0 580 110" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">${tiles}</svg>
+    <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text-secondary)">
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:2px;vertical-align:middle;"></span> Complete</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:2px;vertical-align:middle;"></span> In Progress</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--gray-bg);border:1px solid var(--gray-border);border-radius:2px;vertical-align:middle;"></span> Not Started</span>
+    </div>
+  `;
+}
+
+function renderPdfPreview(persona, agent) {
+  const div = document.createElement('div');
+  div.className = 'pdf-preview';
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  if (agent === 'roadmap') return renderRoadmapPdf(div, persona, today);
+  return renderDesignPdf(div, persona, today);
+}
+
+function renderRoadmapDeliverable(persona) {
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const usedTerms = new Set();
+  const glossaryEntries = persona.glossary_terms_roadmap.filter(t => GLOSSARY[t]).map(t => ({ term: t, def: GLOSSARY[t] }));
+  const challengeCsv = Array.isArray(persona.challenge_list) ? persona.challenge_list.join(', ').toLowerCase() : (persona.challenge_list || '').toLowerCase();
+  const youAreHereName = persona.section_priorities && persona.section_priorities[0] ? persona.section_priorities[0].name : 'Product Development';
+
+  // Build the second and third priorities with brief rationale
+  const sp = persona.section_priorities || [];
+  const additionalSteps = sp.slice(1).map((p, i) => `
+    <p><strong>${i === 0 ? 'Second' : 'Third'} priority — ${escapeHtml(p.name)}.</strong> ${addGlossary(p.reason, usedTerms)} You can begin scoping this in parallel, but it depends on progress in the first priority before it becomes the active focus.</p>
+  `).join('');
+
+  return `
+    <div class="deliverable-pane">
+      <div class="deliverable-header">
+        <div>
+          <div class="brand-tag">POPSTART · MODULE 5 · SECTION 1</div>
+          <h2 class="deliverable-title">Your Product Launch Roadmap</h2>
+          <p class="deliverable-subtitle">${escapeHtml(persona.product_label)} · ${escapeHtml(persona.stage_text)} · ${today}</p>
+        </div>
+        <div class="deliverable-actions">
+          <button class="deliv-action-btn" onclick="exportDeliverableToPDF()">Download PDF</button>
+          <button class="deliv-action-btn secondary" onclick="printDeliverable()">Print</button>
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Where You Are Now</h3>
+        <div class="deliv-lede">You're at the <strong>${escapeHtml(youAreHereName)}</strong> stage of the product development journey.</div>
+        <div class="deliv-body">
+          <p>The product journey has six stages — Design, Testing, Manufacturing, Packaging & Branding, Distribution, and Pricing — and each builds on the one before. Based on what you've shared, you've ${persona.you_are_here === 'design' ? 'started defining the product but not yet built anything' : (persona.you_are_here === 'testing' ? 'built a prototype and started testing' : (persona.you_are_here === 'manufacturing' ? 'moved past design and testing and are now focused on production' : (persona.you_are_here === 'branding' ? 'locked in manufacturing and are now building the brand presence' : (persona.you_are_here === 'distribution' ? 'completed branding and packaging and are choosing how to reach customers' : 'launched and are refining your pricing and operations'))))}. Your biggest current challenge is around <strong>${escapeHtml(challengeCsv)}</strong>, which is consistent with where you are in the journey.</p>
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Where to Start — Your Single Most Important Next Action</h3>
+        <div class="deliv-lede">${addGlossary(persona.where_to_start_action, usedTerms)}</div>
+        <div class="deliv-rationale">
+          <strong>Why this matters.</strong> ${addGlossary(persona.where_to_start_reason, usedTerms)} Trying to move forward on later stages before this one is locked in is one of the most common reasons product founders waste money — packaging changes when manufacturing changes; pricing breaks when the cost basis isn't real yet.
+        </div>
+        <div class="deliv-method">
+          <strong>How to do this.</strong> The Popstart <em>${escapeHtml(persona.where_to_start_specialist)}</em> agent will walk you through it in about ${escapeHtml(persona.where_to_start_time.replace('est. ', ''))}. It'll ask you a handful of targeted questions and build you a concrete plan — not generic advice. After that, you'll have a clear next action that's smaller than "find a manufacturer" and big enough to actually move you forward.
+        </div>
+        <div class="deliv-example">
+          <strong>What good looks like.</strong> Someone in your stage who does this right comes out of the next 1–2 weeks with a specific decision made — a partner chosen, a spec locked, a question answered. Not with more research piled up or more options to consider. Forward motion is the metric.
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Other Priorities to Keep on Your Radar</h3>
+        <div class="deliv-body">
+          ${additionalSteps || '<p>No additional priorities — you\'re close to the end of the development journey.</p>'}
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Key Decisions Ahead</h3>
+        <div class="deliv-body">
+          <p>These are the questions you'll need to answer over the next few weeks. You don't need to resolve them all today — but knowing they're coming changes how you approach the work in front of you.</p>
+          <ul style="margin:8px 0 0 0;padding-left:20px;">
+            ${persona.key_decisions.map(d => `<li style="margin-bottom:6px;">${addGlossary(d, usedTerms)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Your Quick Win This Week</h3>
+        <div class="deliv-lede">${addGlossary(persona.quick_win, usedTerms)}</div>
+        <div class="deliv-rationale">
+          <strong>Why this is the right small step.</strong> The hardest part of being early in any product journey is converting energy into a tangible artifact — a document, a sample, a meeting set. This is sized to be doable in under an hour and produces something concrete you can point to.
+        </div>
+      </div>
+
+      ${glossaryEntries.length >= 3 ? `
+      <div class="deliv-section">
+        <div class="deliv-glossary">
+          <h4>Terms in Your Roadmap</h4>
+          <div class="deliv-glossary-grid">
+            ${glossaryEntries.map(g => `<div><div class="gt">${escapeHtml(g.term)}</div><div class="gd">${escapeHtml(g.def)}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function renderDesignDeliverable(persona) {
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const usedTerms = new Set();
+  const glossaryEntries = persona.glossary_terms_design.filter(t => GLOSSARY[t]).map(t => ({ term: t, def: GLOSSARY[t] }));
+
+  const steps = persona.next_three_steps || [];
+  const stepsHtml = steps.map((s, i) => `
+    <div style="margin-bottom:14px;padding:12px;background:var(--stripe);border-radius:8px;border-left:3px solid var(--blue);">
+      <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">${i+1}. ${escapeHtml(s.action)}</div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px;">${escapeHtml(s.time)} · ${escapeHtml(s.cost)}</div>
+      <div style="font-size:13px;color:var(--text);">${addGlossary(s.reason, usedTerms)}</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="deliverable-pane">
+      <div class="deliverable-header">
+        <div>
+          <div class="brand-tag">POPSTART · MODULE 5 · SECTION 2</div>
+          <h2 class="deliverable-title">Your Product Development Action Plan</h2>
+          <p class="deliverable-subtitle">${escapeHtml(persona.product_label)} · ${escapeHtml(persona.stage_text)} · ${escapeHtml(persona.p1_stage)} · ${today}</p>
+        </div>
+        <div class="deliverable-actions">
+          <button class="deliv-action-btn" onclick="exportDeliverableToPDF()">Download PDF</button>
+          <button class="deliv-action-btn secondary" onclick="printDeliverable()">Print</button>
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Stage Assessment</h3>
+        <div class="deliv-lede">${addGlossary(persona.stage_assessment, usedTerms)}</div>
+        <div class="deliv-rationale">
+          <strong>What this means for your next steps.</strong> Everything that follows in this plan is sized for where you are right now. The actions for someone at <em>${escapeHtml(persona.p1_stage)}</em> are different from someone two stages ahead — pacing matters as much as the work itself.
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Your Next Three Steps</h3>
+        <div class="deliv-body">
+          <p>These are sequenced in order — start with the first and only move on once it's locked. Costs and timings are industry averages and will vary based on your specific situation.</p>
+          ${stepsHtml}
+        </div>
+        <div class="deliv-example">
+          <strong>What good looks like.</strong> Someone who completes these three steps in order over the next 4–8 weeks will have a clear development path forward and the artefacts (specs, contacts, briefs) needed to start production conversations.
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Team Needs</h3>
+        <div class="deliv-body">
+          <p>${addGlossary(persona.team_needs, usedTerms)}</p>
+        </div>
+        <div class="deliv-method">
+          <strong>How to start a conversation with a designer or engineer.</strong> Before your first call, prepare three things: a one-sentence product description, your must-have features list, and any reference products you like or dislike. With those three things in hand, you'll get specific quotes; without them, you'll get padded estimates because the professional is guessing at scope.
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Key Questions to Answer</h3>
+        <div class="deliv-body">
+          <p>These are the questions to sit with over the next few weeks. They're not blocking — but resolving them sharpens every decision that follows.</p>
+          <ul style="margin:8px 0 0 0;padding-left:20px;">
+            ${persona.key_questions.map(q => `<li style="margin-bottom:6px;">${addGlossary(q, usedTerms)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <div class="deliv-section">
+        <h3>Your Quick Win This Week</h3>
+        <div class="deliv-lede">${addGlossary(persona.quick_win_design, usedTerms)}</div>
+        <div class="deliv-rationale">
+          <strong>Why this small action matters now.</strong> The work of product development is mostly slow — tools, samples, partners. But every week without forward motion compounds. A quick win is sized to take an hour or less and produces something tangible — a document, an email sent, a question answered. It restarts momentum.
+        </div>
+      </div>
+
+      ${glossaryEntries.length >= 3 ? `
+      <div class="deliv-section">
+        <div class="deliv-glossary">
+          <h4>Terms in Your Plan</h4>
+          <div class="deliv-glossary-grid">
+            ${glossaryEntries.map(g => `<div><div class="gt">${escapeHtml(g.term)}</div><div class="gd">${escapeHtml(g.def)}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function exportDeliverableToPDF() {
+  alert("In production this would generate a styled PDF. For the prototype, use the Print button — it opens the browser print dialog where you can 'Save as PDF'.");
+}
+function printDeliverable() {
+  const content = $('deliverable-content').innerHTML;
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Popstart — Deliverable</title>
+    <style>
+      body { font-family: Georgia, serif; max-width: 720px; margin: 40px auto; color: #222; padding: 0 20px; }
+      h2 { color: #1F3864; font-size: 24px; margin: 0 0 6px; }
+      h3 { color: #1F3864; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin: 24px 0 10px; }
+      h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin: 0 0 10px; }
+      .deliv-section { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid #ddd; }
+      .deliv-section:last-child { border: none; }
+      .deliv-lede { font-size: 15px; font-weight: 500; margin-bottom: 10px; }
+      .deliv-body { font-size: 13px; line-height: 1.6; }
+      .deliv-rationale { background: #D9E2F3; padding: 10px 12px; border-radius: 6px; margin: 10px 0; font-size: 12px; }
+      .deliv-method { background: #f5f5f5; border-left: 3px solid #999; padding: 8px 12px; margin: 10px 0; font-size: 12px; }
+      .deliv-example { background: #E1F5EE; border-left: 3px solid #0F6E56; padding: 8px 12px; margin: 10px 0; font-size: 12px; font-style: italic; }
+      .deliv-glossary { background: #f5f5f5; padding: 14px; border-radius: 8px; }
+      .deliv-glossary-grid { display: grid; gap: 10px; }
+      .gt { font-weight: 600; color: #1F3864; }
+      .gd { color: #666; font-size: 12px; }
+      .deliverable-actions { display: none; }
+      .deliverable-header { border-bottom: 2px solid #1F3864; padding-bottom: 14px; margin-bottom: 20px; }
+      .brand-tag { font-size: 11px; font-weight: 700; color: #1F3864; letter-spacing: 1px; }
+      .deliverable-subtitle { color: #666; font-size: 13px; margin: 0; }
+      .gloss { font-weight: 600; border-bottom: 1px dotted #2E75B6; }
+      .tooltip { display: none; }
+    </style>
+    </head><body>${content}</body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 250);
+}
+
+function renderRoadmapPdf(div, persona, today) {
+  const usedTerms = new Set();
+  const glossaryEntries = persona.glossary_terms_roadmap.filter(t => GLOSSARY[t]).map(t => ({ term: t, def: GLOSSARY[t] }));
+  div.innerHTML = `
+    <div class="pdf-page">
+      <div class="pdf-header"><div class="brand">POPSTART · MODULE 5 · SECTION 1</div><div class="date">${today}</div></div>
+      <h2 class="pdf-title">Your Product Launch Roadmap</h2>
+      <p class="pdf-subtitle">${escapeHtml(persona.product_label)} · ${escapeHtml(persona.stage_text)}</p>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Stage Progress Tracker</h3>
+        <div class="tracker">${renderTrackerSVG(persona)}</div>
+      </div>
+      <div class="pdf-section" style="background:var(--light-blue);padding:14px;border-radius:8px;">
+        <h3 class="pdf-section-title" style="color:var(--navy)">Where to Start</h3>
+        <div class="pdf-section-body" style="font-weight:600;margin-bottom:4px;">${addGlossary(persona.where_to_start_action, usedTerms)}</div>
+        <div class="pdf-section-body">${addGlossary(persona.where_to_start_reason, usedTerms)}</div>
+        <div class="pdf-section-body" style="margin-top:8px;font-size:12px;color:var(--text-secondary)">${escapeHtml(persona.where_to_start_specialist)} · ${escapeHtml(persona.where_to_start_time)}</div>
+      </div>
+    </div>
+    <div class="pdf-page">
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Section Priorities</h3>
+        <div class="pdf-section-body">
+          ${persona.section_priorities.map(p => `<div style="margin-bottom:8px;"><strong>${p.num}. ${escapeHtml(p.name)}</strong><br><span style="color:var(--text-secondary)">${addGlossary(p.reason, usedTerms)}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Key Decisions Ahead</h3>
+        <div class="pdf-section-body"><ul style="margin:0;padding-left:18px;">${persona.key_decisions.map(d => `<li style="margin-bottom:4px;">${addGlossary(d, usedTerms)}</li>`).join('')}</ul></div>
+      </div>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Quick Win</h3>
+        <div class="pdf-section-body" style="background:var(--teal-bg);padding:10px;border-radius:6px;border-left:3px solid var(--teal-border);">${addGlossary(persona.quick_win, usedTerms)}</div>
+      </div>
+      ${glossaryEntries.length >= 3 ? `
+      <div class="glossary-card">
+        <h4>Terms in Your Roadmap</h4>
+        <div class="glossary-grid">${glossaryEntries.map(g => `<div><span class="term">${escapeHtml(g.term)}</span><div class="def">${escapeHtml(g.def)}</div></div>`).join('')}</div>
+      </div>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+function renderDesignPdf(div, persona, today) {
+  const usedTerms = new Set();
+  const glossaryEntries = persona.glossary_terms_design.filter(t => GLOSSARY[t]).map(t => ({ term: t, def: GLOSSARY[t] }));
+  div.innerHTML = `
+    <div class="pdf-page">
+      <div class="pdf-header"><div class="brand">POPSTART · MODULE 5 · SECTION 2</div><div class="date">${today}</div></div>
+      <h2 class="pdf-title">Your Product Development Action Plan</h2>
+      <p class="pdf-subtitle">${escapeHtml(persona.product_label)} · ${escapeHtml(persona.stage_text)} · ${escapeHtml(persona.p1_stage)}</p>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Stage Assessment</h3>
+        <div class="pdf-section-body">${addGlossary(persona.stage_assessment, usedTerms)}</div>
+      </div>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Next Three Steps</h3>
+        <div class="pdf-section-body">
+          ${persona.next_three_steps.map((s, i) => `
+            <div style="margin-bottom:10px;padding:10px;background:var(--stripe);border-radius:6px;border-left:3px solid var(--blue);">
+              <strong>${i+1}. ${escapeHtml(s.action)}</strong>
+              <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">${escapeHtml(s.time)} · ${escapeHtml(s.cost)}</div>
+              <div style="margin-top:4px;color:var(--text-secondary)">${addGlossary(s.reason, usedTerms)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Team Needs</h3>
+        <div class="pdf-section-body">${addGlossary(persona.team_needs, usedTerms)}</div>
+      </div>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Key Questions to Answer</h3>
+        <div class="pdf-section-body"><ul style="margin:0;padding-left:18px;">${persona.key_questions.map(q => `<li style="margin-bottom:4px;">${addGlossary(q, usedTerms)}</li>`).join('')}</ul></div>
+      </div>
+      <div class="pdf-section">
+        <h3 class="pdf-section-title">Quick Win</h3>
+        <div class="pdf-section-body" style="background:var(--teal-bg);padding:10px;border-radius:6px;border-left:3px solid var(--teal-border);">${addGlossary(persona.quick_win_design, usedTerms)}</div>
+      </div>
+      ${glossaryEntries.length >= 3 ? `
+      <div class="glossary-card">
+        <h4>Terms in Your Plan</h4>
+        <div class="glossary-grid">${glossaryEntries.map(g => `<div><span class="term">${escapeHtml(g.term)}</span><div class="def">${escapeHtml(g.def)}</div></div>`).join('')}</div>
+      </div>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+// =========================================================================
+// MESSAGING HELPERS
+// =========================================================================
+function pushAgent(text, agentLabel) {
+  state.messages.push({ role: 'agent', type: 'msg', text, agent_label: agentLabel || agentName() });
+  renderMessages();
+}
+function pushUser(text) {
+  state.messages.push({ role: 'user', type: 'msg', text });
+  renderMessages();
+  renderInputVariables();
+}
+function pushSystem(text) {
+  state.messages.push({ type: 'system', text });
+  renderMessages();
+}
+function pushPrefill(text) {
+  state.messages.push({ type: 'prefill_notice', text });
+  renderMessages();
+}
+function agentName() {
+  return state.agent === 'roadmap' ? 'Roadmap Agent' : 'Design Planner';
+}
+function clearInputArea() { $('input-area').innerHTML = ''; }
+
+function showChoices(question, hint, options, handler) {
+  const html = `
+    ${question ? `<div class="prompt-question">${question}</div>` : ''}
+    ${hint ? `<div class="hint">${hint}</div>` : ''}
+    <div class="choices">
+      ${options.map((o, i) => `<button class="choice-btn" data-i="${i}">${escapeHtml(o)}</button>`).join('')}
+    </div>
+  `;
+  $('input-area').innerHTML = html;
+  $('input-area').querySelectorAll('.choice-btn').forEach(btn => {
+    btn.onclick = () => {
+      const i = parseInt(btn.dataset.i);
+      $('input-area').querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      setTimeout(() => handler(options[i], i), 200);
+    };
+  });
+}
+
+function showMultiSelect(question, hint, options, handler, example, maxSelections) {
+  let sel = new Set();
+  let fromExample = false;
+  const cap = maxSelections || null;
+  function render() {
+    const hasExample = example && example.length;
+    const counterHtml = cap ? `<div class="hint" id="multi-counter" style="margin-top:8px;margin-bottom:0">Selected ${sel.size} of ${cap}</div>` : '';
+    const exampleBtn = hasExample ? `<button class="use-example-btn" id="multi-example">Use example</button>` : '';
+    const html = `
+      ${question ? `<div class="prompt-question">${question}</div>` : ''}
+      ${hint ? `<div class="hint">${hint}</div>` : ''}
+      <div class="choices">
+        ${options.map((o, i) => `<button class="choice-btn ${sel.has(o) ? 'selected' : ''}" data-i="${i}">${escapeHtml(o)}</button>`).join('')}
+      </div>
+      ${counterHtml}
+      <div class="submit-row">
+        <button class="submit-btn" id="multi-submit">Continue →</button>
+        ${exampleBtn}
+      </div>
+    `;
+    $('input-area').innerHTML = html;
+    function updateUI() {
+      if (cap) {
+        $('multi-counter').textContent = `Selected ${sel.size} of ${cap}`;
+        $('input-area').querySelectorAll('.choice-btn').forEach(btn => {
+          const opt = options[parseInt(btn.dataset.i)];
+          if (sel.size >= cap && !sel.has(opt)) { btn.style.opacity = '0.4'; btn.style.cursor = 'not-allowed'; }
+          else { btn.style.opacity = ''; btn.style.cursor = 'pointer'; }
+        });
+      }
+    }
+    $('input-area').querySelectorAll('.choice-btn').forEach(btn => {
+      btn.onclick = () => {
+        const opt = options[parseInt(btn.dataset.i)];
+        if (sel.has(opt)) { sel.delete(opt); btn.classList.remove('selected'); }
+        else { if (cap && sel.size >= cap) return; sel.add(opt); btn.classList.add('selected'); }
+        updateUI();
+      };
+    });
+    updateUI();
+    $('multi-submit').onclick = () => {
+      if (sel.size === 0) return;  // require at least one
+      handler(Array.from(sel), fromExample);
+    };
+    if (hasExample) {
+      $('multi-example').onclick = () => {
+        sel = new Set(example);
+        fromExample = true;
+        render();
+      };
+    }
+  }
+  render();
+}
+
+function showTextInput(question, hint, example, handler) {
+  const exampleBtn = example ? `<button class="use-example-btn" id="text-example">Use example: ${escapeHtml(example.length > 50 ? example.substring(0, 50) + '…' : example)}</button>` : '';
+  const html = `
+    ${question ? `<div class="prompt-question">${question}</div>` : ''}
+    ${hint ? `<div class="hint">${hint}</div>` : ''}
+    <textarea id="text-input" placeholder="Type your answer…"></textarea>
+    <div class="submit-row">
+      <button class="submit-btn" id="text-submit">Send →</button>
+      ${exampleBtn}
+    </div>
+  `;
+  $('input-area').innerHTML = html;
+  $('text-submit').onclick = () => {
+    const v = $('text-input').value.trim();
+    if (v) handler(v, false);  // false = not from example
+  };
+  if (example) {
+    $('text-example').onclick = () => handler(example, true);  // true = used example
+  }
+}
+
+function showCompositeInput(question, hint, exampleText, dropdownOptions, exampleStage, handler) {
+  const hasExample = exampleText && exampleStage;
+  const exampleBtn = hasExample ? `<button class="use-example-btn" id="composite-example">Use example</button>` : '';
+  const html = `
+    ${question ? `<div class="prompt-question">${question}</div>` : ''}
+    ${hint ? `<div class="hint">${hint}</div>` : ''}
+    <div class="composite-input">
+      <textarea id="composite-text" placeholder="Describe your product in one or two sentences…"></textarea>
+      <select id="composite-dropdown">
+        <option value="">-- Select your current stage --</option>
+        ${dropdownOptions.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="submit-row">
+      <button class="submit-btn" id="composite-submit">Send →</button>
+      ${exampleBtn}
+    </div>
+  `;
+  $('input-area').innerHTML = html;
+  $('composite-submit').onclick = () => {
+    const text = $('composite-text').value.trim();
+    const dropdown = $('composite-dropdown').value;
+    if (text && dropdown) handler({ text, stage: dropdown }, false);
+    else if (!text) $('composite-text').focus();
+    else $('composite-dropdown').focus();
+  };
+  if (hasExample) {
+    $('composite-example').onclick = () => handler({ text: exampleText, stage: exampleStage }, true);
+  }
+}
+
+function showDynamicListInput(question, hint, maxItems, handler, example) {
+  let items = [];
+  let fromExample = false;
+  function render() {
+    const counterText = `${items.length} of ${maxItems}`;
+    const hasExample = example && example.length;
+    const exampleBtn = hasExample ? `<button class="use-example-btn" id="list-example">Use example (${example.length} features)</button>` : '';
+    const html = `
+      ${question ? `<div class="prompt-question">${question}</div>` : ''}
+      ${hint ? `<div class="hint">${hint}</div>` : ''}
+      <div class="list-input" id="list-rows">
+        ${items.map((it, i) => `
+          <div class="list-input-row">
+            <input type="text" data-i="${i}" value="${escapeHtml(it)}" placeholder="Must-have feature ${i+1}">
+            <button class="remove-btn" data-remove="${i}" title="Remove">×</button>
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+        <button class="list-input-add" id="list-add-btn" ${items.length >= maxItems ? 'disabled' : ''}>+ Add another</button>
+        <span class="list-counter">${counterText}</span>
+      </div>
+      <div class="submit-row">
+        <button class="submit-btn" id="list-submit">Send →</button>
+        ${exampleBtn}
+      </div>
+    `;
+    $('input-area').innerHTML = html;
+    $('input-area').querySelectorAll('input[data-i]').forEach(inp => {
+      inp.oninput = () => { items[parseInt(inp.dataset.i)] = inp.value; };
+    });
+    $('input-area').querySelectorAll('[data-remove]').forEach(btn => {
+      btn.onclick = () => { items.splice(parseInt(btn.dataset.remove), 1); render(); };
+    });
+    $('list-add-btn').onclick = () => {
+      if (items.length < maxItems) {
+        items.push(''); render();
+        setTimeout(() => {
+          const inputs = $('input-area').querySelectorAll('input[data-i]');
+          if (inputs.length) inputs[inputs.length - 1].focus();
+        }, 0);
+      }
+    };
+    $('list-submit').onclick = () => {
+      const cleaned = items.map(s => s.trim()).filter(s => s);
+      if (cleaned.length) handler(cleaned, fromExample);
+    };
+    if (hasExample) {
+      $('list-example').onclick = () => {
+        items = [...example];
+        fromExample = true;
+        render();
+      };
+    }
+  }
+  if (items.length === 0) items.push('');
+  render();
+}
+
+// =========================================================================
+// ROADMAP FLOW
+// =========================================================================
+function startRoadmap() {
+  state.agent = 'roadmap';
+  state.cards = {};
+  state.mode = null;
+  state.in_coach_mode = false;
+  $('chat-title').textContent = "Product Launch Roadmap";
+  $('chat-sub').textContent = "Module 5 · Section 1";
+  $('agent-tag').textContent = "ROADMAP";
+  $('agent-tag').style.display = 'inline-block';
+  $('mode-tag').style.display = 'none';
+  renderMessages();
+  renderCards();
+
+  const persona = PERSONAS[state.persona];
+  pushAgent("Let's figure out where you are in the product journey and build a roadmap for what comes next. Tell me about your product and where you are in the process and I'll map the path forward.");
+  setTimeout(() => {
+    pushAgent(persona.roadmap_branch);
+    setTimeout(() => roadmapPromptMode(), 400);
+  }, 500);
+}
+
+function roadmapPromptMode() {
+  pushAgent("We can build your roadmap quick — just the essentials, about 3 minutes — or take more time and go deeper, around 15. Or we can run it the standard way, about 8 minutes. Which works for you today?");
+  showChoices(null, null, ["Quick (3 min)", "Standard (8 min)", "Deep (15 min)"], (choice) => {
+    state.mode = choice.split(' ')[0].toLowerCase();
+    pushUser(choice);
+    $('mode-tag').textContent = state.mode.toUpperCase() + ' MODE';
+    $('mode-tag').style.display = 'inline-block';
+    setTimeout(() => roadmapPromptP1(), 400);
+  });
+}
+
+function roadmapPromptP1() {
+  pushAgent("First — tell me about your product. In one or two sentences, what is it and who is it for?");
+  const persona = PERSONAS[state.persona];
+  showTextInput(
+    "Product Description (Required)",
+    "Hint: Describe your product in one or two sentences.",
+    persona.product_description,
+    (text, fromExample) => { state.inputs.p1 = text; state.used_example.p1 = fromExample; pushUser(text); setTimeout(() => roadmapPromptP2(), 400); }
+  );
+}
+
+function roadmapPromptP2() {
+  pushAgent("Great. Now — where are you with the product right now? Select everything that applies.");
+  const persona = PERSONAS[state.persona];
+  showMultiSelect(
+    "Current Stage in the Process (Required)",
+    "Hint: Select everything that applies.",
+    ["Just Have an Idea", "Concept Defined", "Prototype Built", "Testing Underway", "Manufacturer Identified", "Packaging Designed", "Selling Now"],
+    (selected, fromExample) => {
+      state.inputs.p2 = selected;
+      state.used_example.p2 = fromExample;
+      pushUser(selected.join(', '));
+      setTimeout(() => {
+        // Stage Progress Tracker uses user's actual selections to compute statuses
+        state.cards[1] = `<div style="margin:-4px 0">${renderTrackerSVG(getEffectivePersona())}</div>`;
+        renderCards();
+        if (state.mode === 'quick') roadmapQuickSummary();
+        else roadmapPromptP3();
+      }, 400);
+    },
+    persona.current_stage  // example
+  );
+}
+
+function roadmapQuickSummary() {
+  const persona = PERSONAS[state.persona];
+  // In Quick mode we skip P3/P4/P5 — substitute defaults from persona
+  pushAgent(`Got it. Since we're going quick, I'm using these defaults: timeline of ${persona.timeline.toLowerCase()}, goal of ${persona.goal.toLowerCase()}, biggest challenge is ${persona.challenge_list[0].toLowerCase()}. Change any of those before I build, or shall I go ahead?`);
+  showChoices(null, null, ["Looks good, build it", "Change something"], (choice, i) => {
+    pushUser(choice);
+    if (i === 0) {
+      state.inputs.p3 = persona.challenge_list;
+      state.used_example.p3 = true;
+      state.inputs.p4 = persona.timeline;
+      state.used_example.p4 = true;
+      state.inputs.p5 = persona.goal;
+      state.used_example.p5 = true;
+      setTimeout(() => generateRoadmap(), 400);
+    } else {
+      pushAgent("No problem — let's set them one at a time.");
+      setTimeout(() => roadmapPromptP3(), 400);
+    }
+  });
+}
+
+function roadmapPromptP3() {
+  const persona = PERSONAS[state.persona];
+  if (state.mode === 'deep' && state.inputs.p2) {
+    pushAgent("Before we move on — which of those stages do you feel most behind on?");
+    setTimeout(() => {
+      pushAgent("Got it, helpful context. Next — what are your biggest current challenges? Pick up to three.");
+      roadmapAskP3(persona);
+    }, 800);
+  } else {
+    pushAgent("What are your biggest current challenges right now? Pick up to three.");
+    roadmapAskP3(persona);
+  }
+}
+
+function roadmapAskP3(persona) {
+  showMultiSelect(
+    "Biggest Current Challenges (Optional — pick up to 3)",
+    "Hint: This helps us prioritise your roadmap.",
+    ["Defining the Product", "Finding a Manufacturer", "Figuring Out Pricing", "Choosing a Sales Channel", "Building the Brand", "Understanding Compliance", "Something Else"],
+    (selected, fromExample) => {
+      state.inputs.p3 = selected;
+      state.used_example.p3 = fromExample;
+      pushUser(selected.join(', '));
+      setTimeout(() => roadmapPromptP4(), 400);
+    },
+    persona.challenge_list, 3
+  );
+}
+
+function roadmapPromptP4() {
+  pushAgent("When are you hoping to launch or hit your next major milestone?");
+  showChoices("Timeline to Launch (Optional)",
+    "This helps us pace your roadmap. If you're not sure, pick what feels closest — you can always adjust later.",
+    ["Within 30 Days", "Within 3 Months", "Within 6 Months", "More Than 6 Months Away", "Already Launched"],
+    (choice) => { state.inputs.p4 = choice; state.used_example.p4 = false; pushUser(choice); setTimeout(() => roadmapPromptP5(), 400); });
+}
+
+function roadmapPromptP5() {
+  pushAgent("Last one — what's your primary goal right now?");
+  showChoices("Primary Goal (Optional)",
+    "Think about what success looks like in 90 days. Pick the option closest to your current focus.",
+    ["Get a Prototype Built", "Find a Manufacturer", "Launch My First Sales Channel", "Improve an Existing Product", "Audit and Fix Gaps", "Not Sure Yet"],
+    (choice) => {
+      state.inputs.p5 = choice;
+      state.used_example.p5 = false;
+      pushUser(choice);
+      if (choice === "Not Sure Yet") {
+        pushAgent("That's totally normal at your stage. When in doubt, default to the next concrete artifact in your sequence — a prototype if you don't have one, a manufacturer if you do, a sales channel if you're past production. I'll use that to shape your roadmap.");
+      }
+      setTimeout(() => {
+        if (state.mode === 'deep') {
+          pushAgent("Quick check before I build — anything you want to tighten or change?");
+          showChoices(null, null, ["Looks good, build it", "Let me reconsider P5"], (c, i) => {
+            pushUser(c);
+            if (i === 0) generateRoadmap();
+            else setTimeout(() => roadmapPromptP5(), 400);
+          });
+        } else generateRoadmap();
+      }, choice === "Not Sure Yet" ? 1100 : 400);
+    });
+}
+
+function generateRoadmap() {
+  const persona = getEffectivePersona();
+  clearInputArea();
+  pushSystem("Building your roadmap…");
+  switchTab('cards');
+  const fills = [
+    { num: 2, content: `<strong>${escapeHtml(persona.where_to_start_action)}</strong><br><span style="color:var(--text-secondary)">${escapeHtml(persona.where_to_start_reason)}</span><div style="margin-top:6px;font-size:11px;color:var(--text-secondary)">${escapeHtml(persona.where_to_start_specialist)} · ${escapeHtml(persona.where_to_start_time)}</div>` },
+    { num: 3, content: persona.section_priorities.map(p => `<div style="margin-bottom:4px;"><strong>${p.num}. ${escapeHtml(p.name)}</strong><div style="color:var(--text-secondary);font-size:12px;">${escapeHtml(p.reason)}</div></div>`).join('') },
+    { num: 4, content: `<span style="color:var(--text-secondary)">Six stages — Design, Testing, Manufacturing, Packaging & Branding, Distribution, Pricing — each builds on the one before.</span>` },
+    { num: 5, content: `<ul style="margin:0;padding-left:18px;">${persona.key_decisions.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>` },
+    { num: 6, content: `<div style="background:var(--teal-bg);padding:8px;border-radius:4px;border-left:3px solid var(--teal-border);">${escapeHtml(persona.quick_win)}</div>` },
+    { num: 7, content: persona.glossary_terms_roadmap.length >= 3 ? `<div style="font-size:11px;color:var(--text-secondary)">${persona.glossary_terms_roadmap.length} terms collected — see the PDF for definitions.</div>` : null },
+  ];
+  let i = 0;
+  function fillNext() {
+    if (i >= fills.length) { setTimeout(() => deliverRoadmapPdf(), 500); return; }
+    const f = fills[i];
+    if (f.content !== null) state.cards[f.num] = f.content;
+    renderCards();
+    i++;
+    setTimeout(fillNext, 400);
+  }
+  fillNext();
+}
+
+function deliverRoadmapPdf() {
+  pushAgent("Your roadmap is ready. Take a look in the Cards tab — or open the Deliverable tab for the full version with rationale and examples for each section.");
+  state.messages.push({ type: 'pdf', persona: getEffectivePersona(), agent: 'roadmap' });
+  renderMessages();
+  state.profile_pre_filled = true;
+  state.deliverable_ready = true;
+  if (state.active_tab === 'deliverable') renderDeliverable();
+  setTimeout(() => roadmapTransitionToCoach(), 800);
+}
+
+function roadmapTransitionToCoach() {
+  const persona = PERSONAS[state.persona];
+  state.in_coach_mode = true;
+  state.messages.push({
+    type: 'coach_banner',
+    text: "Your product launch roadmap is ready. Want to talk through where to start or dig into any of the stages in more detail?",
+    suggestions: persona.coach_topics_roadmap,
+  });
+  state.messages.push({
+    type: 'handoff_banner',
+    text: "Your roadmap pointed you toward the Product Design Planner as your next move. I can take you there now with your profile already filled in.",
+    agent_id: 'design',
+    agent_name: 'Product Design Planner',
+  });
+  renderMessages();
+  showTextInput("Coach Mode — ask anything", "Or click one of the suggestions above to continue.", "Type a question about your roadmap…", (text) => {
+    pushUser(text); respondInCoachMode(text);
+  });
+}
+
+function handoffTo(agentId) {
+  if (agentId === 'design') {
+    // Write hand-off data to sessionStorage and navigate to Design Planner
+    const roadmapP1 = state.inputs.p1;
+    const roadmapP1FromExample = state.used_example.p1;
+    const roadmapP2 = state.inputs.p2;
+    // Map Roadmap current_stage to Design P1 stage
+    let designStage = "Idea Stage";
+    if (roadmapP2) {
+      if (roadmapP2.includes("Ready to Manufacture") || roadmapP2.includes("Manufacturer Identified") || roadmapP2.includes("Selling Now") || roadmapP2.includes("Packaging Designed")) {
+        designStage = "Ready to Manufacture";
+      } else if (roadmapP2.includes("Testing Underway") || roadmapP2.includes("Prototype Built")) {
+        designStage = "Prototype Built";
+      } else if (roadmapP2.includes("Concept Defined")) {
+        designStage = "Concept Written";
+      }
+    }
+    try {
+      sessionStorage.setItem('popstart_handoff', JSON.stringify({
+        from: 'roadmap',
+        persona: state.persona,
+        product_description: roadmapP1,
+        design_stage: designStage,
+        from_example: roadmapP1FromExample === true,
+        timestamp: Date.now(),
+      }));
+    } catch (e) {
+      console.warn('sessionStorage unavailable', e);
+    }
+    pushSystem("Routing to Product Design Planner…");
+    setTimeout(() => { window.location.href = 'design-planner.html'; }, 600);
+  }
+}
+
+// =========================================================================
+// DESIGN PLANNER FLOW
+// =========================================================================
+function startDesign(viaHandoff, carriedP1Text, carriedP1Stage, carriedP1FromExample) {
+  state.agent = 'design';
+  state.cards = {};
+  state.mode = null;
+  state.in_coach_mode = false;
+  // Preserve carried-over data; clear other inputs
+  const carried = {};
+  if (carriedP1Text) {
+    carried.p1_from_roadmap = carriedP1Text;
+    carried.p1_stage_from_roadmap = carriedP1Stage;
+  }
+  state.inputs = carried;
+  // Track that the carried P1 came from example (if it did) so output derivation uses persona content
+  state.used_example = {};
+  if (carriedP1FromExample !== undefined) state.used_example.p1_from_roadmap = carriedP1FromExample;
+
+  $('chat-title').textContent = "Product Design Planner";
+  $('chat-sub').textContent = "Module 5 · Section 2";
+  $('agent-tag').textContent = "DESIGN";
+  $('agent-tag').style.display = 'inline-block';
+  $('mode-tag').style.display = 'none';
+
+  if (!viaHandoff) {
+    state.messages = [];
+    renderMessages();
+    renderCards();
+  } else {
+    state.messages.push({ type: 'system', text: '— Switched to Product Design Planner —' });
+    renderMessages();
+    renderCards();
+  }
+
+  const persona = PERSONAS[state.persona];
+
+  if (viaHandoff) {
+    const productLabel = carriedP1Text ? shortLabel(carriedP1Text) : persona.product_label;
+    setTimeout(() => {
+      state.messages.push({
+        type: 'prefill_notice',
+        text: `Pre-filled from your Roadmap session: product (${productLabel.toLowerCase()}), current stage (${carriedP1Stage.toLowerCase()}). I won't ask those again unless you want to change them.`
+      });
+      renderMessages();
+      setTimeout(() => designOpening(), 600);
+    }, 300);
+  } else {
+    designOpening();
+  }
+}
+
+function designOpening() {
+  const persona = PERSONAS[state.persona];
+  pushAgent("Let's map out your product development path. Tell me about your idea and where you are in the process and I'll help you build a clear action plan for the next stage.");
+  setTimeout(() => {
+    pushAgent(persona.design_branch);
+    setTimeout(() => designPromptMode(), 400);
+  }, 500);
+}
+
+function designPromptMode() {
+  pushAgent("We can build your development plan quick — just the essentials, about 3 minutes — or take more time and go deeper, around 15. Or we can run it the standard way, about 8 minutes. Which works for you today?");
+  showChoices(null, null, ["Quick (3 min)", "Standard (8 min)", "Deep (15 min)"], (choice) => {
+    state.mode = choice.split(' ')[0].toLowerCase();
+    pushUser(choice);
+    $('mode-tag').textContent = state.mode.toUpperCase() + ' MODE';
+    $('mode-tag').style.display = 'inline-block';
+    setTimeout(() => designPromptP1(), 400);
+  });
+}
+
+function designPromptP1() {
+  const persona = PERSONAS[state.persona];
+  if (state.profile_pre_filled) {
+    // Came from Roadmap handoff — confirm or update
+    const carriedOver = state.inputs.p1_from_roadmap || persona.product_description;
+    const carriedStage = state.inputs.p1_stage_from_roadmap || persona.p1_stage;
+    pushAgent(`I already have your product description and current stage from your Roadmap session. Confirming: ${shortLabel(carriedOver).toLowerCase()}, at ${carriedStage.toLowerCase()}. That right?`);
+    showChoices(null, null, ["Yes, that's right", "Let me update it"], (choice, i) => {
+      pushUser(choice);
+      if (i === 0) {
+        state.inputs.p1 = { text: carriedOver, stage: carriedStage };
+        state.used_example.p1 = state.used_example.p1_from_roadmap === true;
+        setTimeout(() => designPromptP2(), 400);
+      } else {
+        designAskP1Fresh(persona);
+      }
+    });
+  } else {
+    pushAgent("First — tell me about your product idea and where you are in the development process.");
+    designAskP1Fresh(persona);
+  }
+}
+
+function designAskP1Fresh(persona) {
+  showCompositeInput(
+    "Product Idea or Current Stage (Required)",
+    "Hint: Tell us where you are. Even a rough idea counts. Both fields are required.",
+    persona.product_description,
+    ["Idea Stage", "Concept Written", "Prototype Built", "Ready to Manufacture"],
+    persona.p1_stage,
+    (result, fromExample) => {
+      state.inputs.p1 = result;
+      state.used_example.p1 = fromExample;
+      pushUser(`${result.text} — Stage: ${result.stage}`);
+      setTimeout(() => designPromptP2(), 400);
+    }
+  );
+}
+
+function designPromptP2() {
+  const persona = PERSONAS[state.persona];
+  pushAgent("Who is the target customer for this product?");
+  showTextInput(
+    "Target Customer (Required)",
+    "Hint: Describe the person most likely to buy this.",
+    persona.target_customer,
+    (text, fromExample) => {
+      state.inputs.p2 = text;
+      state.used_example.p2 = fromExample;
+      pushUser(text);
+      if (state.mode === 'deep') {
+        pushAgent("Helpful — what's the moment they reach for your product instead of the alternative?");
+        showTextInput(null, "(Deep mode follow-up — feel free to keep it short)", null, (txt) => {
+          pushUser(txt);
+          setTimeout(() => designPromptP3(), 400);
+        });
+      } else {
+        setTimeout(() => designPromptP3(), 400);
+      }
+    }
+  );
+}
+
+function designPromptP3() {
+  const persona = PERSONAS[state.persona];
+  pushAgent("What are your must-have features for v1? Up to 5.");
+  showDynamicListInput(
+    "Must-Have Features (Required — up to 5)",
+    "Hint: List the things your product absolutely has to do at launch.",
+    5,
+    (features, fromExample) => {
+      state.inputs.p3 = features;
+      state.used_example.p3 = fromExample;
+      pushUser(features.join(', '));
+      if (features.length === 5) {
+        pushAgent("Five must-haves is the cap for a reason — every feature adds development time and cost. If you had to ship v1 in 30 days, which one would you cut?");
+        showTextInput(null, "(Or say 'none' if all five are truly essential)", null, (txt) => {
+          pushUser(txt);
+          if (state.mode === 'quick') setTimeout(() => designQuickSummary(), 400);
+          else setTimeout(() => designPromptP4(), 400);
+        });
+      } else {
+        if (state.mode === 'quick') setTimeout(() => designQuickSummary(), 400);
+        else setTimeout(() => designPromptP4(), 400);
+      }
+    },
+    persona.must_haves
+  );
+}
+
+function designQuickSummary() {
+  const persona = PERSONAS[state.persona];
+  pushAgent(`Since we're going quick, I'm using defaults: design support = ${persona.design_support.toLowerCase()}, timeline = ${persona.design_timeline.toLowerCase()}. Build with those, or change?`);
+  showChoices(null, null, ["Looks good, build it", "Change something"], (choice, i) => {
+    pushUser(choice);
+    if (i === 0) {
+      state.inputs.p4 = persona.design_support;
+      state.used_example.p4 = true;
+      state.inputs.p5 = persona.design_timeline;
+      state.used_example.p5 = true;
+      setTimeout(() => generateDesignPlan(), 400);
+    } else {
+      setTimeout(() => designPromptP4(), 400);
+    }
+  });
+}
+
+function designPromptP4() {
+  pushAgent("Who do you need to help bring this to life?");
+  showChoices(
+    "Design Support Needed (Optional)",
+    "Hint: An industrial designer handles how it looks and feels. An engineer handles how it works.",
+    ["Industrial Designer", "Engineer", "CAD Specialist", "Prototype Builder", "I Already Have a Team", "Not Sure Yet"],
+    (choice) => {
+      state.inputs.p4 = choice;
+      state.used_example.p4 = false;
+      pushUser(choice);
+      if (choice === "Not Sure Yet") {
+        pushAgent("Quick distinction worth knowing — an industrial designer focuses on how a product looks, feels, and is used. An engineer focuses on how it actually works and gets built. Most physical products need both at some stage. Based on what you've described, I'd start with an industrial designer. You can find them on Upwork (affordable, $200-800 for concept work), LinkedIn (for senior talent), or IDSA's directory (vetted professionals).");
+        setTimeout(() => designPromptP5(), 1200);
+      } else {
+        setTimeout(() => designPromptP5(), 400);
+      }
+    }
+  );
+}
+
+function designPromptP5() {
+  pushAgent("Last one — what's your timeline goal?");
+  showChoices("Timeline Goal (Optional)",
+    "This shapes how aggressive your action plan is. Pick what's realistic given your other commitments.",
+    ["As Soon As Possible", "Within 3 Months", "Within 6 Months", "Just Exploring"],
+    (choice) => {
+      state.inputs.p5 = choice;
+      state.used_example.p5 = false;
+      pushUser(choice);
+      if (choice === "Just Exploring") {
+        pushAgent("Got it — you're not on a tight deadline. I'll keep your plan deliberate rather than aggressive: emphasis on learning what you need to learn before spending money. You can always come back and update the timeline if your situation changes.");
+      }
+      setTimeout(() => {
+        if (state.mode === 'deep') {
+          pushAgent("Quick refinement check before I build — anything you want to tighten?");
+          showChoices(null, null, ["Build it", "Let me reconsider"], (c, i) => {
+            pushUser(c);
+            if (i === 0) generateDesignPlan();
+            else setTimeout(() => designPromptP5(), 400);
+          });
+        } else generateDesignPlan();
+      }, choice === "Just Exploring" ? 1100 : 400);
+    });
+}
+
+function generateDesignPlan() {
+  const persona = getEffectivePersona();
+  clearInputArea();
+  pushSystem("Building your action plan…");
+  switchTab('cards');
+  const fills = [
+    { num: 1, content: `<span style="color:var(--text-secondary)">${escapeHtml(persona.stage_assessment)}</span>` },
+    { num: 2, content: persona.next_three_steps.map((s, i) => `<div style="margin-bottom:8px;"><strong>${i+1}. ${escapeHtml(s.action)}</strong><div style="font-size:11px;color:var(--text-secondary)">${escapeHtml(s.time)} · ${escapeHtml(s.cost)}</div></div>`).join('') },
+    { num: 3, content: `<span style="color:var(--text-secondary)">${escapeHtml(persona.team_needs.substring(0, 180))}…</span>` },
+    { num: 4, content: `<ul style="margin:0;padding-left:18px;">${persona.key_questions.map(q => `<li>${escapeHtml(q)}</li>`).join('')}</ul>` },
+    { num: 5, content: `<div style="background:var(--teal-bg);padding:8px;border-radius:4px;border-left:3px solid var(--teal-border);">${escapeHtml(persona.quick_win_design)}</div>` },
+    { num: 6, content: persona.glossary_terms_design.length >= 3 ? `<div style="font-size:11px;color:var(--text-secondary)">${persona.glossary_terms_design.length} terms collected — see the PDF.</div>` : null },
+  ];
+  let i = 0;
+  function fillNext() {
+    if (i >= fills.length) { setTimeout(() => deliverDesignPdf(), 500); return; }
+    const f = fills[i];
+    if (f.content !== null) state.cards[f.num] = f.content;
+    renderCards();
+    i++;
+    setTimeout(fillNext, 400);
+  }
+  fillNext();
+}
+
+function deliverDesignPdf() {
+  pushAgent("Your development plan is ready. Take a look in the Cards tab — or open the Deliverable tab for the full version with rationale and examples for each section.");
+  state.messages.push({ type: 'pdf', persona: getEffectivePersona(), agent: 'design' });
+  renderMessages();
+  state.deliverable_ready = true;
+  if (state.active_tab === 'deliverable') renderDeliverable();
+  setTimeout(() => designTransitionToCoach(), 800);
+}
+
+function designTransitionToCoach() {
+  const persona = PERSONAS[state.persona];
+  state.in_coach_mode = true;
+  state.messages.push({
+    type: 'coach_banner',
+    text: "Your development plan is ready. Want to talk through any of the next steps or figure out what kind of designer or engineer you actually need?",
+    suggestions: persona.coach_topics_design,
+  });
+  renderMessages();
+  showTextInput("Coach Mode — ask anything", "Or click one of the suggestions above.", "Type a question about your plan…", (text) => {
+    pushUser(text); respondInCoachMode(text);
+  });
+}
+
+// =========================================================================
+// COACH MODE RESPONSES (both agents)
+// =========================================================================
+function handleCoachClick(i) {
+  const persona = PERSONAS[state.persona];
+  const topics = state.agent === 'roadmap' ? persona.coach_topics_roadmap : persona.coach_topics_design;
+  const topic = topics[i];
+  pushUser(topic);
+  respondInCoachMode(topic);
+}
+
+function respondInCoachMode(userText) {
+  const responses = {
+    roadmap: {
+      exploring: {
+        "where do i actually start": "The honest answer: with a sentence. Before you spend on a designer, write one line that says exactly who this lunch container is for and what it does for them. Once that's locked, the Product Design Planner agent can help you go from sentence to sketch to prototype. Want me to take you there?",
+        "how do i find a designer": "Realistic budget options: Upwork and Fiverr for early concept work ($200–800 for an initial round), local industrial design students looking for portfolio projects (often $0 or trade), or 99designs for design contests. The Product Design Planner walks through which fits your situation.",
+        "should i get a patent": "Patents are expensive and slow — usually not the first step. What you do need is an NDA before sharing your designs with any potential manufacturer or designer.",
+      },
+      prelaunch: {
+        "can i work on packaging": "Mostly no, with one exception. Packaging dimensions need to follow what manufacturing locks in — the bag size, the seal type, even the food-safe rating. The exception is brand identity: colors, logo, brand story can develop in parallel.",
+        "how long does it typically take": "For a silicone product: 4–6 weeks for manufacturer vetting and sample rounds, 8–12 weeks for tooling and first production run, 2–4 weeks for distribution setup. Realistic range: 4 to 6 months from manufacturer-selected to first sale.",
+        "what goes in an nda": "Standard NDA covers: definition of confidential information, permitted use, term (usually 2–5 years), and remedies for breach. The Manufacturer Vetting Checklist has a template. Critical: get it signed before sending any design files.",
+      },
+      inbusiness: {
+        "i am already selling but i feel": "Your instinct is right and you've already identified the biggest one: testing. Children's products have specific safety standards. The Testing and Compliance Checker agent walks through what specifically applies.",
+        "i skipped testing": "It's fixable. You don't need to halt sales while you sort this — though you should pause any new marketing claims around safety until you have documentation. Get a current production sample to an accredited lab.",
+        "how do i raise prices": "Three plays that work: raise prices on new SKUs only (customers don't notice), add value before raising the price, or frame the increase around a real cost reason. The Pricing Calculator agent walks through which fits your margin situation.",
+      },
+    },
+    design: {
+      exploring: {
+        "how do i find a good product designer": "Search 'industrial designer + consumer product' as your filter, then narrow by hourly rate ($30–80 is reasonable for early-stage work) and reviews on similar projects. Avoid designers who say yes to everything — you want someone who pushes back on scope. First engagement should be small: $200–500 for concept sketches, not a full commitment.",
+        "what's the difference between an industrial": "An industrial designer focuses on how the product looks, feels, and is used — shape, ergonomics, materials feel. An engineer focuses on how it actually works and gets built — mechanisms, manufacturing-grade specs, tolerances. For most physical consumer products you'll need both eventually, but you start with the designer.",
+        "how much does it cost to build a prototype": "Depends on what you need to learn. A rough handmade or 3D-printed mock-up runs $50–500. A working version with custom tooling can run $2,000–10,000. A pre-production sample might be $5,000–20,000. Start cheap and only escalate when the cheap version answers what you needed it to.",
+      },
+      prelaunch: {
+        "what should i have ready before i approach an engineer": "Three things will get you a much better quote: a one-sentence product description, your must-have features list, and any reference products you like or dislike. Without those, you'll get padded estimates because they're guessing at scope.",
+        "do i need a patent": "Specific patent advice is outside what I can do — that needs an IP attorney. What I can say generally: most early-stage founders use an NDA before sharing designs, not a patent. NDAs are cheaper and faster. The Manufacturer Vetting Checklist has NDA templates.",
+        "how much does it cost to build a prototype": "At your stage (prototype already built), the next prototype is a manufacturing-grade sample — usually $2,000–10,000 from a manufacturer, depending on tooling. The cost per unit drops dramatically after that first run.",
+      },
+      inbusiness: {
+        "what should i have ready": "For a v2 conversation: pull your current CAD documentation, your supplier specs, a triaged list of customer-reported issues from the last 90 days, and your target unit cost reduction (if any). An engineer can move much faster with that bundle than with 'we want to improve the product'.",
+        "how do i find a compliance specialist": "For children's products specifically, look for consultants experienced in ASTM F963 (toy safety) and CPSIA. ASTM's website has a registry. Avoid generalist regulatory consultants — the children's category is specialised enough that the wrong consultant will give you generic advice. Budget $500–2,000 for an initial assessment.",
+        "do i need a patent before sharing": "Generic answer: NDA first, patent later (if at all). Most v2 improvements are incremental enough that a design patent isn't worth the cost. Talk to an IP attorney if you're making a genuinely novel mechanical change.",
+      },
+    },
+  };
+
+  const personaResponses = responses[state.agent][state.persona];
+  const key = Object.keys(personaResponses).find(k => userText.toLowerCase().includes(k.split(' ').slice(0, 3).join(' ').toLowerCase()));
+  const response = key ? personaResponses[key] : "Good question. In a working version, I'd reference your plan and your specific inputs. For this prototype, try one of the suggested topics above — those have full scripted responses.";
+
+  setTimeout(() => {
+    pushAgent(response);
+    showTextInput("Coach Mode — ask anything", "Keep going, or restart.", "Type another question…", (text) => {
+      pushUser(text); respondInCoachMode(text);
+    });
+  }, 600);
+}
+
+// =========================================================================
+// CONTROLS
+// =========================================================================
+function resetSession() {
+  state.persona = $('profile-stage').value;
+  state.agent = 'roadmap';
+  state.profile_pre_filled = false;
+  state.messages = [];
+  state.cards = {};
+  state.inputs = {};
+  state.used_example = {};
+  state.deliverable_ready = false;
+  updateProfileDerived();
+  state.active_tab = 'inputs';
+  switchTab('inputs');
+  startRoadmap();
+}
+function toggleNotes() { $('notes').classList.toggle('hidden'); }
+
+$('profile-stage').addEventListener('change', resetSession);
+$('profile-industry').addEventListener('change', () => { updateProfileDerived(); renderInputVariables(); });
+
+// Boot
+updateProfileDerived();
+state.persona = $('profile-stage').value;
+state.active_tab = 'inputs';
+renderInputVariables();
+renderCards();
+startRoadmap();
+</script>
+</body>
+</html>
